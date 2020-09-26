@@ -106,8 +106,6 @@ public class BuildingGenerator : MonoBehaviour {
         var height = 1f;
         var height2 = 1.5f;
         var thickness = 0.15f;
-        Debug.Log($"dimensions: {dimensions}");
-        Debug.Log($"widthB: {widthB}; lengthB: {lengthB}");
 
         // roof A/A'
         var roofA = Instantiate(RoofPrefab, new Vector3(-0.5f, dimensions.y, -0.5f), Quaternion.identity, transform);

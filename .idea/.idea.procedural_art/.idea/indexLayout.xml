@@ -8,18 +8,23 @@
       <Path>Library/PackageCache/com.unity.ide.rider@2.0.7</Path>
       <Path>Library/PackageCache/com.unity.ide.vscode@1.2.1</Path>
       <Path>Library/PackageCache/com.unity.probuilder@4.4.0</Path>
+      <Path>Library/PackageCache/com.unity.render-pipelines.core@7.5.1</Path>
+      <Path>Library/PackageCache/com.unity.render-pipelines.high-definition@7.5.1</Path>
       <Path>Library/PackageCache/com.unity.settings-manager@1.0.3</Path>
+      <Path>Library/PackageCache/com.unity.shadergraph@7.5.1</Path>
       <Path>Library/PackageCache/com.unity.test-framework@1.1.16</Path>
       <Path>Library/PackageCache/com.unity.textmeshpro@2.1.1</Path>
       <Path>Library/PackageCache/com.unity.timeline@1.2.16</Path>
+      <Path>Library/PackageCache/com.unity.visualeffectgraph@7.5.1</Path>
+      <Path>LocalPackages/com.unity.render-pipelines.high-definition-config</Path>
       <Path>Packages</Path>
       <Path>ProjectSettings</Path>
     </explicitIncludes>
     <explicitExcludes>
+      <Path>.git</Path>
       <Path>.idea</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
-      <Path>Temp</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>

@@ -1,30 +1,58 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class BuildingGenerator : MonoBehaviour {
-    public GameObject StraightPrefab;
-    public GameObject CurvePrefab;
-    public RoofGenerator RoofPrefab;
-    public CornerRoofGenerator CornerRoofPrefab;
     public RandomSettings GeneratorSettings;
     public FeatureSettings Features;
 
+    private MeshFilter meshFilter;
+    private Mesh mesh;
+    
     private WeightedRandom buildingTypeSelector;
-    private Arr3d<GameObject> gridObjects;
-    private List<GameObject> roofObjects;
     private List<Rectangle> rects;
 
+    private int buildingHeight;
+    private Vector2Int dimensionsA;
+    private Vector2Int dimensionsB;
+
+    private void Awake() {
+        meshFilter = GetComponent<MeshFilter>();
+        mesh = new Mesh();
+        meshFilter.mesh = mesh;
+    }
+
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)) { 
             Generate();
+        }
     }
 
     private void OnDrawGizmos() {
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.color = Color.green;
-        if (rects != null && gridObjects != null) {
+        /*Gizmos.matrix = transform.localToWorldMatrix;
+        if(boolArr == null) return;
+        var path = MarchingSquares.March(boolArr.CrossSection(0));
+        Debug.Log(path.Count);
+        var colorStep = 1.0f / path.Count;
+        var current = Vector2Int.zero;
+        for (var i = 0; i < path.Count; i++) {
+            Gizmos.color = Color.HSVToRGB(colorStep * i, 1, 1);
+            var next = current + path[i];
+            var from = new Vector3(current.x-0.5f, 0, current.y-0.5f);
+            var to = new Vector3(next.x-0.5f, 0, next.y-0.5f);
+            Gizmos.DrawLine(from, to);
+            current = next;
+        }
+        Gizmos.color = Color.HSVToRGB(colorStep * (path.Count-1), 1, 1);
+        var fromLast = new Vector3(current.x-0.5f, 0, current.y-0.5f);
+        var toLast = new Vector3(0-0.5f, 0, 0-0.5f);
+        Gizmos.DrawLine(fromLast, toLast);*/
+
+        /*if (rects != null && gridObjects != null) {
             foreach (var rectangle in rects) {
                 var avgV2 = rectangle.Min + rectangle.Max;
                 var sizeV2 = rectangle.Max - rectangle.Min;
@@ -32,7 +60,7 @@ public class BuildingGenerator : MonoBehaviour {
                 var size = new Vector3(sizeV2.x - 0.2f, .1f, sizeV2.y - 0.2f);
                 Gizmos.DrawCube(avg, size);
             }
-        }
+        }*/
     }
 
     private void Generate() {
@@ -40,31 +68,20 @@ public class BuildingGenerator : MonoBehaviour {
             throw new Exception("Generator Settings cannot be null! Make sure to assign a RandomSettings object to the class before calling BuildingGenerator::Generate");
         }
 
-        Clear();
+        mesh.Clear();
         Setup();
         var buildingType = buildingTypeSelector.Value();
         var boolArr = buildingType == 0 ? GenSquare() : buildingType == 1 ? GenL() : GenT();
-        var tileDirections = GetDirections(boolArr);
-        CleanupOutline(tileDirections);
-        SpawnBuilding(tileDirections);
-        rects = GetRoofRectangles(boolArr);
-
-        // SpawnRoof(rects, boolArr.Length2);
-    }
-
-    private void Clear() {
-        if (gridObjects != null)
-            foreach (var obj in gridObjects) {
-                Destroy(obj);
-            }
-
-        if (roofObjects != null)
-            foreach (var obj in roofObjects) {
-                Destroy(obj);
-            }
-
-        gridObjects = null;
-        roofObjects = null;
+        var roofs = buildingType == 0 ? GenSquareRoof() : buildingType == 1 ? GenLRoof() : GenTRoof();
+        var path = MarchingSquares.March(boolArr);
+        CleanupOutline(boolArr);
+        var walls = GenWalls(path);
+        
+        var (vertices, triangles) = ListUtils.Combine(roofs, walls);
+        
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
     }
 
     private void Setup() {
@@ -80,73 +97,84 @@ public class BuildingGenerator : MonoBehaviour {
         buildingTypeSelector.CalculateAdditiveWeights();
     }
 
-    private Arr3d<bool> GenSquare() {
+    private Arr2d<bool> GenSquare() {
         var size = RandUtils.RandomBetween(GeneratorSettings.SquareBuildingSettings.MinSize, GeneratorSettings.SquareBuildingSettings.MaxSize);
-        var boolArr = new Arr3d<bool>(size, true);
+        buildingHeight = size.y;
+        dimensionsA = new Vector2Int(size.x, size.z);
+        dimensionsB = Vector2Int.zero;
+        
+        var boolArr = new Arr2d<bool>(size.x, size.z, true);
         return boolArr;
     }
 
-    private Arr3d<bool> GenL() {
+    private Arr2d<bool> GenL() {
         var widthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthA);
         var lengthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthA);
         var widthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthB);
         widthB = MathUtils.Clamp(widthB, 2, widthA - 1);
         var lengthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthB);
         lengthB = MathUtils.Clamp(lengthB, 1, Mathf.CeilToInt(lengthA / 2f));
-        var height = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxHeight);
+        buildingHeight = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxHeight);
 
-        var dimensions = new Vector3Int(widthA, height, lengthA);
-        var boolArr = new Arr3d<bool>(dimensions, true);
-        CarveLShape(boolArr, dimensions, widthB, lengthB);
-        SpawnLRoof(dimensions, widthB, lengthB);
+        dimensionsA = new Vector2Int(widthA, lengthA);
+        dimensionsB = new Vector2Int(widthB, lengthB);
+        var boolArr = new Arr2d<bool>(dimensionsA, true);
+        CarveLShape(boolArr);
         return boolArr;
     }
-
-    private void SpawnLRoof(Vector3 dimensions, float widthB, float lengthB) {
-        var height = 1f;
-        var height2 = 1.5f;
-        var thickness = 0.15f;
-
-        // roof A/A'
-        var roofA = Instantiate(RoofPrefab, new Vector3(-0.5f, dimensions.y, -0.5f), Quaternion.identity, transform);
-        roofA.InitializeAndBuild(dimensions.x - widthB / 2f, height, (dimensions.z - lengthB) / 2f, thickness, Vector3.one, false);
-        var roofA1 = Instantiate(RoofPrefab, new Vector3(-0.5f, dimensions.y, dimensions.z - lengthB - 0.5f), Quaternion.Euler(0, 180, 0), transform);
-        roofA1.InitializeAndBuild(dimensions.x - widthB / 2f, height, (dimensions.z - lengthB) / 2f, thickness, Vector3.one, false, flip: true);
-
-        // roof B/B'
-        var roofB = Instantiate(RoofPrefab, new Vector3(dimensions.x - widthB - 0.5f, dimensions.y, dimensions.z - 0.5f), Quaternion.Euler(0, 90, 0), transform);
-        roofB.InitializeAndBuild(lengthB + (dimensions.z - lengthB) / 2f, height2, widthB / 2f, thickness, Vector3.one, false);
-        var roofB1 = Instantiate(RoofPrefab, new Vector3(dimensions.x - 0.5f, dimensions.y, dimensions.z - 0.5f), Quaternion.Euler(0, 270, 0), transform);
-        roofB1.InitializeAndBuild(lengthB + (dimensions.z - lengthB) / 2f, height2, widthB / 2f, thickness, Vector3.one, false, flip: true);
-
-        // corner
-        var cornerA = Instantiate(CornerRoofPrefab, new Vector3(dimensions.x - 0.5f, dimensions.y, -0.5f), Quaternion.Euler(0, -90, 0), transform);
-        cornerA.InitializeAndBuild((dimensions.z - lengthB) / 2f, height2, widthB / 2f, thickness, Vector3.zero, false);
-        var cornerB = Instantiate(CornerRoofPrefab, new Vector3(dimensions.x - widthB - 0.5f, dimensions.y, -0.5f), Quaternion.Euler(0, -90, 0), transform);
-        cornerB.InitializeAndBuild((dimensions.z - lengthB) / 2f, height2, widthB / 2f, thickness, Vector3.zero, false, flipZ: true);
-        roofObjects = new List<GameObject> {
-            roofA.gameObject,
-            roofA1.gameObject,
-            roofB.gameObject,
-            roofB1.gameObject,
-            cornerA.gameObject,
-            cornerB.gameObject
-        };
-    }
-
-    private Arr3d<bool> GenT() {
+    private Arr2d<bool> GenT() {
         var width = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxWidth);
         var length = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxLength);
         var extrusion = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxExtrusion);
         extrusion = MathUtils.Clamp(extrusion, 1, Mathf.CeilToInt(length / 2f));
         var inset = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxInset);
         inset = MathUtils.Clamp(inset, 1, Mathf.CeilToInt(width / 4f));
-        var height = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxHeight);
+        buildingHeight = RandUtils.RandomBetween(GeneratorSettings.TBuildingSettings.MinMaxHeight);
 
-        var dimensions = new Vector3Int(width, height, length);
-        var boolArr = new Arr3d<bool>(dimensions, true);
-        CarveTShape(boolArr, dimensions, extrusion, inset);
+        dimensionsA = new Vector2Int(width, length);
+        dimensionsB = new Vector2Int(extrusion, inset);
+        var boolArr = new Arr2d<bool>(dimensionsA, true);
+        CarveTShape(boolArr);
         return boolArr;
+    }
+
+    private (List<Vector3> vertices, List<int> triangles) GenSquareRoof() { return (new List<Vector3>(), new List<int>());}
+
+    private (List<Vector3> vertices, List<int> triangles) GenLRoof() {
+        var height = 1f;
+        var height2 = 1.5f;
+        var thickness = 0.15f;
+
+        var roofA = StraightRoofGenerator.Generate(dimensionsA.x - dimensionsB.x / 2f, height, (dimensionsA.y - dimensionsB.y) / 2f, thickness, new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, Vector3.zero);
+        var roofA1 = StraightRoofGenerator.Generate(dimensionsA.x - dimensionsB.x / 2f, height, (dimensionsA.y - dimensionsB.y) / 2f, thickness, new Vector3(-0.5f, buildingHeight, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), Vector3.zero, flip: true);
+
+        var roofB = StraightRoofGenerator.Generate(dimensionsB.y + (dimensionsA.y - dimensionsB.y) / 2f, height2, dimensionsB.x / 2f, thickness, new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), Vector3.zero);
+        var roofB1 = StraightRoofGenerator.Generate(dimensionsB.y + (dimensionsA.y - dimensionsB.y) / 2f, height2, dimensionsB.x / 2f, thickness, new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 270, 0), Vector3.zero, flip: true);
+
+        var cornerA = CornerRoofGenerator.Generate((dimensionsA.y - dimensionsB.y) / 2f, height2, dimensionsB.x / 2f, thickness, new Vector3(dimensionsA.x - 0.5f, buildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), Vector3.zero);
+        var cornerB = CornerRoofGenerator.Generate((dimensionsA.y - dimensionsB.y) / 2f, height2, dimensionsB.x / 2f, thickness, new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, buildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), Vector3.zero, flipZ: true);
+
+        return ListUtils.Combine(roofA, roofA1, roofB, roofB1, cornerA, cornerB);
+    }
+
+    private (List<Vector3> vertices, List<int> triangles) GenTRoof() { return (new List<Vector3>(), new List<int>());}
+
+    private (List<Vector3> vertices, List<int> triangles) GenWalls(List<Vector2Int> path) {
+        var thickness = 0.1f;
+        var walls = new List<(List<Vector3>, List<int>)>();
+        var current = Vector2Int.zero;
+        foreach (var point in path) {
+            var next = current + point;
+            var from = new Vector3(current.x-0.5f, 0, current.y-0.5f);
+            var to = new Vector3(next.x-0.5f, 0, next.y-0.5f);
+            var diff = to - from;
+            var angle = Vector3.SignedAngle(Vector3.right, diff, Vector3.up);
+            var wall = WallGenerator.Generate(diff.magnitude, buildingHeight, thickness, from, Quaternion.Euler(0, angle, 0), true);
+            walls.Add(wall);
+            current = next;
+        }
+
+        return ListUtils.Combine(walls.ToArray());
     }
 
     private Arr3d<TileDirection> GetDirections(Arr3d<bool> arr) {
@@ -236,46 +264,44 @@ public class BuildingGenerator : MonoBehaviour {
         return tileDirections;
     }
 
-    private void CleanupOutline(Arr3d<TileDirection> tileDirections) {
-        var queuedToRemove = new List<Vector3Int>();
-        for (int x = 1; x < tileDirections.Length1 - 1; x++) {
-            for (int y = 1; y < tileDirections.Length2 - 1; y++) {
-                for (int z = 1; z < tileDirections.Length3 - 1; z++) {
-                    var north = tileDirections[x, y, z - 1] != TileDirection.None;
-                    var south = tileDirections[x, y, z + 1] != TileDirection.None;
-                    var east = tileDirections[x + 1, y, z] != TileDirection.None;
-                    var west = tileDirections[x - 1, y, z] != TileDirection.None;
-                    if (tileDirections[x, y, z] == TileDirection.None) continue;
+    private void CleanupOutline(Arr2d<bool> boolArr) {
+        var queuedToRemove = new List<Vector2Int>();
+        for (int x = 1; x < boolArr.Length1 - 1; x++) {
+            for (int y = 1; y < boolArr.Length2 - 1; y++) {
+                    var north = boolArr[x, y - 1];
+                    var south = boolArr[x, y + 1];
+                    var east = boolArr[x + 1, y];
+                    var west = boolArr[x - 1, y];
+                    if (!boolArr[x, y]) continue;
 
                     // Remove if surrounded
                     if (north && south && east && west) {
-                        queuedToRemove.Add(new Vector3Int(x, y, z));
+                        queuedToRemove.Add(new Vector2Int(x, y));
                     }
-                }
             }
         }
 
-        queuedToRemove.ForEach(coord => tileDirections[coord] = 0);
+        queuedToRemove.ForEach(coord => boolArr[coord] = false);
     }
 
-    private void CarveLShape(Arr3d<bool> arr, Vector3Int dimensions, int widthB, int lengthB) {
-        var from = new Vector3Int(0, 0, dimensions.z - lengthB);
-        var to = new Vector3Int(dimensions.x - widthB, dimensions.y, dimensions.z);
+    private void CarveLShape(Arr2d<bool> arr) {
+        var from = new Vector2Int(0, dimensionsA.y - dimensionsB.y);
+        var to = new Vector2Int(dimensionsA.x - dimensionsB.x, dimensionsA.y);
         arr.Fill(from, to, false);
     }
 
-    private void CarveTShape(Arr3d<bool> arr, Vector3Int dimensions, int extrusion, int inset) {
-        var from = new Vector3Int(0, 0, dimensions.z - extrusion + 1);
-        var to = new Vector3Int(inset, dimensions.y, dimensions.z);
+    private void CarveTShape(Arr2d<bool> arr) {
+        var from = new Vector2Int(0, dimensionsA.y - dimensionsB.x + 1);
+        var to = new Vector2Int(dimensionsB.y, dimensionsA.y);
         arr.Fill(from, to, false);
 
         // Move over to the other cut-out
-        from += Vector3Int.right * (dimensions.x - inset);
-        to += Vector3Int.right * (dimensions.x - inset);
+        from += Vector2Int.right * (dimensionsA.x - dimensionsB.y);
+        to += Vector2Int.right * (dimensionsA.x - dimensionsB.y);
         arr.Fill(from, to, false);
     }
 
-    private void SpawnBuilding(Arr3d<TileDirection> tileDirections) {
+    /*private void SpawnBuilding(Arr3d<TileDirection> tileDirections) {
         gridObjects = new Arr3d<GameObject>(tileDirections.Length);
         for (int x = 0; x < tileDirections.Length1; x++)
         for (int y = 0; y < tileDirections.Length2; y++)
@@ -285,7 +311,7 @@ public class BuildingGenerator : MonoBehaviour {
             var obj = Instantiate(objectToSpawn, new Vector3(x, y, z), Quaternion.Euler(directionToRotation[tileDirections[x, y, z]]), transform);
             gridObjects[x, y, z] = obj;
         }
-    }
+    }*/
 
     private List<Rectangle> GetRoofRectangles(Arr3d<bool> building) {
         var lastFloor = new Arr2d<bool>(building.Length1, building.Length3);
@@ -307,19 +333,6 @@ public class BuildingGenerator : MonoBehaviour {
         }
 
         return rects;
-    }
-
-    private void SpawnRoof(List<Rectangle> rectangles, int y) {
-        roofObjects = new List<GameObject>();
-        foreach (var rectangle in rectangles) {
-            for (var i = rectangle.Min.x; i < rectangle.Max.x; i++) {
-                for (var j = rectangle.Min.y; j < rectangle.Max.y; j++) {
-                    var roof = Instantiate(RoofPrefab, new Vector3(i, y, j), Quaternion.identity, transform);
-                    roof.InitializeAndBuild(1, 1, 1, .15f, Vector3.zero);
-                    roofObjects.Add(roof.gameObject);
-                }
-            }
-        }
     }
 
     #region Rectangle Utils

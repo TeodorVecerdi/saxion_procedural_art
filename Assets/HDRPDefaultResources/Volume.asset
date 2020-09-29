@@ -15,8 +15,8 @@ MonoBehaviour:
   active: 1
   m_AdvancedMode: 1
   rotation:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 360
     min: 0
     max: 360
   skyIntensityMode:
@@ -31,11 +31,11 @@ MonoBehaviour:
     min: 0
   upperHemisphereLuxValue:
     m_OverrideState: 0
-    m_Value: 3.1579783
+    m_Value: 2.469965
     min: 0
   upperHemisphereLuxColor:
     m_OverrideState: 0
-    m_Value: {x: 0.46842462, y: 0.47323647, z: 0.5}
+    m_Value: {x: 0.4595064, y: 0.44328895, z: 0.5}
   desiredLuxValue:
     m_OverrideState: 1
     m_Value: 107527
@@ -51,22 +51,22 @@ MonoBehaviour:
     m_Value: 0
   hdriSky:
     m_OverrideState: 1
-    m_Value: {fileID: 8900000, guid: f92793713f2b4c343afb89e6509caded, type: 3}
+    m_Value: {fileID: 8900000, guid: 7c461b2156eca5e46b79e1540110b9cd, type: 3}
   enableBackplate:
     m_OverrideState: 0
     m_Value: 1
   backplateType:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 3
   groundLevel:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   scale:
     m_OverrideState: 0
     m_Value: {x: 32, y: 32.0001}
   projectionDistance:
-    m_OverrideState: 1
-    m_Value: 12.05
+    m_OverrideState: 0
+    m_Value: 13.98
     min: 0.0000001
   plateRotation:
     m_OverrideState: 0
@@ -88,7 +88,7 @@ MonoBehaviour:
     max: 100
   shadowTint:
     m_OverrideState: 0
-    m_Value: {r: 0.46842462, g: 0.47323647, b: 0.5, a: 1}
+    m_Value: {r: 0.4595064, g: 0.44328895, b: 0.5, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
@@ -256,7 +256,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   maxShadowDistance:
     m_OverrideState: 1
-    m_Value: 150
+    m_Value: 10000
     min: 0
   directionalTransmissionMultiplier:
     m_OverrideState: 1
@@ -270,7 +270,7 @@ MonoBehaviour:
     max: 4
   cascadeShadowSplit0:
     m_OverrideState: 1
-    m_Value: 0.05
+    m_Value: 0.05462961
   cascadeShadowSplit1:
     m_OverrideState: 1
     m_Value: 0.15
@@ -305,7 +305,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   mode:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 0
   toeStrength:
     m_OverrideState: 1
     m_Value: 0.25
@@ -335,7 +335,7 @@ MonoBehaviour:
     m_Value: 1.11
     min: 0.001
   lutTexture:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {fileID: 8534537815417165676, guid: 017b1c5f32b87e64081b08d6bbc3fc14,
       type: 3}
   lutContribution:
@@ -343,6 +343,85 @@ MonoBehaviour:
     m_Value: 1
     min: 0
     max: 1
+--- !u!114 &-1404202393050044109
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3df29e7cc05fbec4aa43e06ea875565d, type: 3}
+  m_Name: ProceduralSky
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  rotation:
+    m_OverrideState: 0
+    m_Value: 0
+    min: 0
+    max: 360
+  skyIntensityMode:
+    m_OverrideState: 1
+    m_Value: 2
+  exposure:
+    m_OverrideState: 0
+    m_Value: 9
+  multiplier:
+    m_OverrideState: 1
+    m_Value: 2.62
+    min: 0
+  upperHemisphereLuxValue:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+  upperHemisphereLuxColor:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0, z: 0}
+  desiredLuxValue:
+    m_OverrideState: 0
+    m_Value: 20000
+  updateMode:
+    m_OverrideState: 0
+    m_Value: 2
+  updatePeriod:
+    m_OverrideState: 0
+    m_Value: 0
+    min: 0
+  includeSunInBaking:
+    m_OverrideState: 0
+    m_Value: 0
+  sunSize:
+    m_OverrideState: 1
+    m_Value: 0.04
+    min: 0
+    max: 1
+  sunSizeConvergence:
+    m_OverrideState: 1
+    m_Value: 4
+    min: 1
+    max: 10
+  atmosphereThickness:
+    m_OverrideState: 1
+    m_Value: 1
+    min: 0
+    max: 5
+  skyTint:
+    m_OverrideState: 0
+    m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    hdr: 0
+    showAlpha: 1
+    showEyeDropper: 1
+  groundColor:
+    m_OverrideState: 0
+    m_Value: {r: 0.369, g: 0.349, b: 0.341, a: 1}
+    hdr: 0
+    showAlpha: 1
+    showEyeDropper: 1
+  enableSunDisk:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &-502711103994769349
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -359,7 +438,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   skyType:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
   skyAmbientMode:
     m_OverrideState: 1
     m_Value: 1
@@ -387,6 +466,7 @@ MonoBehaviour:
   - {fileID: -502711103994769349}
   - {fileID: -6851390190372109203}
   - {fileID: 7580203552597586806}
+  - {fileID: -1404202393050044109}
   - {fileID: -2995433784405488554}
   - {fileID: -1779971312821059166}
   - {fileID: 6482760097481474009}
@@ -520,11 +600,11 @@ MonoBehaviour:
     showAlpha: 0
     showEyeDropper: 1
   dirtTexture:
-    m_OverrideState: 0
-    m_Value: {fileID: 0}
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: 203b35c8eaa5f684c9d722891603d7cf, type: 3}
   dirtIntensity:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 2
     min: 0
   anamorphic:
     m_OverrideState: 0
@@ -551,25 +631,25 @@ MonoBehaviour:
   m_AdvancedMode: 0
   mode:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 1
   meteringMode:
-    m_OverrideState: 0
-    m_Value: 2
+    m_OverrideState: 1
+    m_Value: 0
   luminanceSource:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   fixedExposure:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: -104.1
   compensation:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   limitMin:
     m_OverrideState: 1
-    m_Value: -1
+    m_Value: -222.6
   limitMax:
     m_OverrideState: 1
-    m_Value: 100
+    m_Value: 11.13
   curveMap:
     m_OverrideState: 0
     m_Value:
@@ -623,10 +703,10 @@ MonoBehaviour:
   m_AdvancedMode: 0
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.71019256, z: 0.69957185, w: 0.033955853}
+    m_Value: {x: 1, y: 1, z: 1, w: -0.35383317}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.8992888, z: 0.7479341, w: 0.1697793}
+    m_Value: {x: 1, y: 1, z: 1, w: 0.101095185}
   highlights:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1, w: 0}
@@ -778,8 +858,8 @@ MonoBehaviour:
     m_Value: 1
     min: 0
   planetRotation:
-    m_OverrideState: 0
-    m_Value: {x: 0, y: 0, z: 0}
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 13.3, z: 0}
   spaceEmissionTexture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -788,8 +868,8 @@ MonoBehaviour:
     m_Value: 1
     min: 0
   spaceRotation:
-    m_OverrideState: 0
-    m_Value: {x: 42.13, y: 60.49, z: 7.25}
+    m_OverrideState: 1
+    m_Value: {x: 342.7, y: 54.4, z: 7.25}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1

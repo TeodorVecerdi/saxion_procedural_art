@@ -29,6 +29,14 @@ public class Arr3d<T> : IEnumerable<T> {
         }
     }
 
+    public Arr2d<T> CrossSection(int y) {
+        var arr2d = new Arr2d<T>(length1, length3);
+        for(var i = 0; i < length1; i++)
+        for (var j = 0; j < length3; j++)
+            arr2d[i, j] = arr[i][y][j];
+        return arr2d;
+    }
+
     public void Expand(int dimension, int size, bool reverseSide = false, T value = default) {
         if (size == 0) return;
         var newLength1 = length1;

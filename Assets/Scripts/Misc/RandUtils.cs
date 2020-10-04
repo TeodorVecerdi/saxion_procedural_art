@@ -11,6 +11,10 @@ public static class RandUtils {
         return Random.Range(min, max + 1);
     }
 
+    public static float Range(float min, float max) {
+        return Random.Range(min, max);
+    }
+
     public static int RandomBetween(Vector2Int range) {
         return RangeInclusive(range.x, range.y);
     }

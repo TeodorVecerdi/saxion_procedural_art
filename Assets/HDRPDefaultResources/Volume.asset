@@ -256,7 +256,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   maxShadowDistance:
     m_OverrideState: 1
-    m_Value: 10000
+    m_Value: 150
     min: 0
   directionalTransmissionMultiplier:
     m_OverrideState: 1
@@ -270,7 +270,7 @@ MonoBehaviour:
     max: 4
   cascadeShadowSplit0:
     m_OverrideState: 1
-    m_Value: 0.05462961
+    m_Value: 0.05
   cascadeShadowSplit1:
     m_OverrideState: 1
     m_Value: 0.15
@@ -279,15 +279,15 @@ MonoBehaviour:
     m_Value: 0.3
   cascadeShadowBorder0:
     m_OverrideState: 1
-    m_Value: 0.13333334
+    m_Value: 0.1333333
   cascadeShadowBorder1:
     m_OverrideState: 1
-    m_Value: 0.06666666
+    m_Value: 0.066666
   cascadeShadowBorder2:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   cascadeShadowBorder3:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
 --- !u!114 &-1779971312821059166
 MonoBehaviour:
@@ -370,7 +370,7 @@ MonoBehaviour:
     m_Value: 9
   multiplier:
     m_OverrideState: 1
-    m_Value: 2.62
+    m_Value: 3.141592
     min: 0
   upperHemisphereLuxValue:
     m_OverrideState: 0
@@ -580,12 +580,12 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   threshold:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 0.5
     min: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.34
     min: 0
     max: 1
   scatter:
@@ -604,7 +604,7 @@ MonoBehaviour:
     m_Value: {fileID: 2800000, guid: 203b35c8eaa5f684c9d722891603d7cf, type: 3}
   dirtIntensity:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 6.46
     min: 0
   anamorphic:
     m_OverrideState: 0
@@ -646,7 +646,7 @@ MonoBehaviour:
     m_Value: 0
   limitMin:
     m_OverrideState: 1
-    m_Value: -222.6
+    m_Value: -222.36
   limitMax:
     m_OverrideState: 1
     m_Value: 11.13
@@ -681,7 +681,7 @@ MonoBehaviour:
     m_Value: 1
   adaptationSpeedDarkToLight:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 1
     min: 0.001
   adaptationSpeedLightToDark:
     m_OverrideState: 1

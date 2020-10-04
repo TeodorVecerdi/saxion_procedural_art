@@ -1,44 +1,17 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CornerRoofGenerator {
-    private float roofWidth;
-    private float roofLength;
-    private float roofHeight;
-    private float roofThickness;
+public class CornerRoofGenerator : MeshGenerator {
+    private float width;
+    private float length;
+    private float height;
+    private float thickness;
     private bool thicknessBasedOnRoofAngle;
-    
     private bool addCap;
     private Vector3 capOffset;
-    
     private bool flipX;
     private bool flipZ;
-    private Vector3 vertexOffset;
-    private Quaternion rotation;
-
-    private List<Vector3> vertices;
-    private List<int> triangles;
-    
-    public static (List<Vector3> vertices, List<int> triangles) Generate(float roofWidth, float roofHeight, float roofLength, float roofThickness, Vector3 vertexOffset, Quaternion rotation, Vector3 capOffset, bool thicknessBasedOnRoofAngle = false, bool addCap = false, bool flipX = false, bool flipZ = false) {
-        var generator = new CornerRoofGenerator(roofWidth, roofHeight, roofLength, roofThickness, vertexOffset, rotation, capOffset, thicknessBasedOnRoofAngle, addCap, flipX, flipZ);
-        return (generator.vertices, generator.triangles);
-    }
-
-    public CornerRoofGenerator(float roofWidth, float roofHeight, float roofLength, float roofThickness, Vector3 vertexOffset, Quaternion rotation, Vector3 capOffset, bool thicknessBasedOnRoofAngle = false, bool addCap = false, bool flipX = false, bool flipZ = false) {
-        this.roofWidth = roofWidth;
-        this.roofLength = roofLength;
-        this.roofHeight = roofHeight;
-        this.roofThickness = roofThickness;
-        this.vertexOffset = vertexOffset;
-        this.rotation = rotation;
-        this.thicknessBasedOnRoofAngle = thicknessBasedOnRoofAngle;
-        this.addCap = addCap;
-        this.capOffset = capOffset;
-        this.flipX = flipX;
-        this.flipZ = flipZ;
-        
-        Generate();
-    }
+    private bool joinCaps;
 
     /*
     private void OnDrawGizmos() {
@@ -126,36 +99,61 @@ public class CornerRoofGenerator {
     }
     */
 
+    protected override void SetDefaultSettings() {
+        defaultParameters = new Dictionary<string, dynamic> {
+            {"width", 1f},
+            {"length", 1f},
+            {"height", 1f},
+            {"thickness", 0.1f},
+            {"thicknessBasedOnRoofAngle", false},
+            {"addCap", false},
+            {"capOffset", Vector3.zero},
+            {"flipX", false},
+            {"flipZ", false},
+            {"joinCaps", false}
+        };
+    }
 
-    private void Generate() {
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
+    protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
+        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
+        length = parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"];
+        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
+        thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
+        thicknessBasedOnRoofAngle = parameters.ContainsKey("thicknessBasedOnRoofAngle") ? parameters["thicknessBasedOnRoofAngle"] : defaultParameters["thicknessBasedOnRoofAngle"];
+        addCap = parameters.ContainsKey("addCap") ? parameters["addCap"] : defaultParameters["addCap"];
+        capOffset = parameters.ContainsKey("capOffset") ? parameters["capOffset"] : defaultParameters["capOffset"];
+        flipX = parameters.ContainsKey("flipX") ? parameters["flipX"] : defaultParameters["flipX"];
+        flipZ = parameters.ContainsKey("flipZ") ? parameters["flipZ"] : defaultParameters["flipZ"];
+        joinCaps = parameters.ContainsKey("joinCaps") ? parameters["joinCaps"] : defaultParameters["joinCaps"];
+    }
 
-        var cap10 = new Vector3(0, roofThickness, 0);
+    protected override void Generate() {
+        var cap10 = new Vector3(0, thickness, 0);
         var cap13 = new Vector3(0, 0, 0);
-        var cap11 = new Vector3(flipX ? -roofWidth : roofWidth, roofThickness, 0);
-        var cap12 = new Vector3(flipX ? -roofWidth : roofWidth, 0, 0);
+        var cap11 = new Vector3(flipX ? -width : width, thickness, 0);
+        var cap12 = new Vector3(flipX ? -width : width, 0, 0);
 
-        var cap20 = new Vector3(0, roofThickness, flipZ ? -roofLength : roofLength);
-        var cap23 = new Vector3(0, 0, flipZ ? -roofLength : roofLength);
-        var cap21 = new Vector3(0, roofThickness, 0);
+        var cap20 = new Vector3(0, thickness, flipZ ? -length : length);
+        var cap23 = new Vector3(0, 0, flipZ ? -length : length);
+        var cap21 = new Vector3(0, thickness, 0);
         var cap22 = new Vector3(0, 0, 0);
+        var capMovement30 = joinCaps ? flipX ? thickness : -thickness : 0;
+        var capMovement41 = joinCaps ? flipZ ? thickness : -thickness : 0;
+        var cap30 = new Vector3(capOffset.z + capMovement30, capOffset.y, flipZ ? thickness : -thickness + capOffset.x);
+        var cap31 = new Vector3(flipX ? -width : width + capOffset.z, capOffset.y, flipZ ? thickness : -thickness + capOffset.x);
 
-        var cap30 = new Vector3(0 + capOffset.z, capOffset.y, flipZ ? roofThickness : -roofThickness + capOffset.x);
-        var cap31 = new Vector3(flipX ? -roofWidth : roofWidth + capOffset.z, capOffset.y, flipZ ? roofThickness : -roofThickness + capOffset.x);
+        var cap40 = new Vector3(flipX ? thickness : -thickness + capOffset.x, capOffset.y, flipZ ? -length : length + capOffset.z);
+        var cap41 = new Vector3(flipX ? thickness : -thickness + capOffset.x, capOffset.y, capOffset.z + capMovement41);
 
-        var cap40 = new Vector3(flipX ? roofThickness : -roofThickness + capOffset.x, capOffset.y, flipZ ? -roofLength : roofLength + capOffset.z);
-        var cap41 = new Vector3(flipX ? roofThickness : -roofThickness + capOffset.x, capOffset.y, 0 + capOffset.z);
-
-        var cap50 = new Vector3(flipX ? -roofWidth : roofWidth, roofHeight, flipZ ? -roofLength : roofLength);
-        var cap51 = new Vector3(flipX ? -roofWidth : roofWidth, roofHeight - roofThickness, flipZ ? -roofLength : roofLength);
+        var cap50 = new Vector3(flipX ? -width : width, height, flipZ ? -length : length);
+        var cap51 = new Vector3(flipX ? -width : width, height - thickness, flipZ ? -length : length);
 
         if (thicknessBasedOnRoofAngle) {
             var v1 = cap11 - cap12;
             var v2 = cap51 - cap12;
             var angle = Mathf.Deg2Rad * Vector3.Angle(v1, v2);
             var multiplier = 1f / Mathf.Sin(angle);
-            var actualRoofThickness = roofThickness * multiplier;
+            var actualRoofThickness = thickness * multiplier;
             cap10.y = actualRoofThickness;
             cap11.y = actualRoofThickness;
             cap20.y = actualRoofThickness;
@@ -164,16 +162,17 @@ public class CornerRoofGenerator {
             cap31.z = flipZ ? actualRoofThickness : -actualRoofThickness + capOffset.x;
             cap40.x = flipX ? actualRoofThickness : -actualRoofThickness + capOffset.x;
             cap41.x = flipX ? actualRoofThickness : -actualRoofThickness + capOffset.x;
-            cap51.y = roofHeight - actualRoofThickness;
+            cap51.y = height - actualRoofThickness;
         }
+
         AddQuad(cap10, cap11, cap12, cap13, flipX ^ flipZ);
         AddQuad(cap20, cap21, cap22, cap23, flipX ^ flipZ);
         AddTriangle(cap10, cap50, cap11, flipX ^ flipZ);
         AddTriangle(cap20, cap50, cap21, flipX ^ flipZ);
         AddQuad(cap11, cap50, cap51, cap12, flipX ^ flipZ);
         AddQuad(cap50, cap20, cap23, cap51, flipX ^ flipZ);
-        AddTriangle(cap22, cap12, cap51, flipX ^ flipZ /*^*/);
-        AddTriangle(cap22, cap51, cap23, flipX ^ flipZ /*^*/);
+        AddTriangle(cap22, cap12, cap51, flipX ^ flipZ);
+        AddTriangle(cap22, cap51, cap23, flipX ^ flipZ);
 
         if (addCap) {
             AddTriangle(cap12, cap31, cap11, flipX ^ flipZ);
@@ -185,50 +184,5 @@ public class CornerRoofGenerator {
             AddTriangle(cap21, cap30, cap41, flipX ^ flipZ);
             AddTriangle(cap41, cap30, cap22, flipX ^ flipZ);
         }
-        
-        // Rotation & Translation
-        for (var i = 0; i < vertices.Count; i++) {
-            vertices[i] = rotation * vertices[i];
-            vertices[i] += vertexOffset;
-        }
-    }
-
-    private void AddQuad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, bool flip) {
-        var quadIndex = vertices.Count;
-        if (flip) {
-            vertices.Add(v3);
-            vertices.Add(v2);
-            vertices.Add(v1);
-            vertices.Add(v0);
-        } else {
-            vertices.Add(v0);
-            vertices.Add(v1);
-            vertices.Add(v2);
-            vertices.Add(v3);
-        }
-
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 1);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex + 3);
-    }
-
-    private void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, bool flip) {
-        var triangleIndex = vertices.Count;
-        if (flip) {
-            vertices.Add(v2);
-            vertices.Add(v1);
-            vertices.Add(v0);
-        } else {
-            vertices.Add(v0);
-            vertices.Add(v1);
-            vertices.Add(v2);
-        }
-
-        triangles.Add(triangleIndex);
-        triangles.Add(triangleIndex + 1);
-        triangles.Add(triangleIndex + 2);
     }
 }

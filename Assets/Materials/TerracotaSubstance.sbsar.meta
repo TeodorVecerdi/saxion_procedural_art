@@ -17,7 +17,7 @@ ScriptedImporter:
     generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://stylized_old_terracotta\" label=\"\" >\n 
-      <presetinput identifier=\"$outputsize\" uid=\"2082555328\" type=\"8\" value=\"10,10\"
+      <presetinput identifier=\"$outputsize\" uid=\"2082555328\" type=\"8\" value=\"12,12\"
       />\n  <presetinput identifier=\"$randomseed\" uid=\"726881170\" type=\"4\"
       value=\"4778\" />\n  <presetinput identifier=\"plaster_color\" uid=\"351645272\"
       type=\"2\" value=\"1,1,1\" />\n  <presetinput identifier=\"plaster_second_color_intensity\"
@@ -275,7 +275,7 @@ ScriptedImporter:
       - name: _NormalMapSpace
         float: 0
       - name: _NormalScale
-        float: 1
+        float: 8
       - name: _PPDLodThreshold
         float: 5
       - name: _PPDMaxSamples
@@ -621,8 +621,8 @@ ScriptedImporter:
     - label: Default
       bOverride: 0
       bLockRatio: 1
-      textureWidth: 1024
-      textureHeight: 1024
+      textureWidth: 4096
+      textureHeight: 4096
       textureFormatMode: 0
       normalCompressed: 0
       bGenerateOnLoad: 1

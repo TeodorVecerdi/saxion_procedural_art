@@ -66,7 +66,8 @@ public class RandomSettings : ScriptableObject {
         public Vector2Int MinMaxWidthB;
         public Vector2Int MinMaxLengthB;
         [Space]
-        public Vector2Int OverhangMinMax;
+        public Vector2Int OverhangMinMaxStart;
+        public Vector2Int OverhangMinMaxHeight;
         public float OverhangChance;
 
         public LBuildingSettingsData Clone() {
@@ -76,7 +77,8 @@ public class RandomSettings : ScriptableObject {
                 MinMaxLengthA = MinMaxLengthA,
                 MinMaxWidthB = MinMaxWidthB,
                 MinMaxLengthB = MinMaxLengthB,
-                OverhangMinMax = OverhangMinMax,
+                OverhangMinMaxStart = OverhangMinMaxStart,
+                OverhangMinMaxHeight = OverhangMinMaxHeight,
                 OverhangChance = OverhangChance
             };
             return lbs;

@@ -1,39 +1,33 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
-public class WallGenerator {
-    private float width;
-    private float height;
-    private float thickness;
-    private Vector3 vertexOffset;
-    private Quaternion rotation;
+public class WallGenerator : MeshGenerator {
+    protected float width;
+    protected float height;
+    protected float thickness;
+    protected bool thicknessInwards;
+    protected bool thicknessOutwards; // if neither of these two are set, it will be in the middle
 
-    private bool thicknessInwards;
-    private bool thicknessOutwards; // if neither of these two are set, it will be in the middle
-
-    internal List<Vector3> vertices;
-    internal List<int> triangles;
-
-    public static (List<Vector3> vertices, List<int> triangles) Generate(float width, float height, float thickness, Vector3 vertexOffset, Quaternion rotation, bool thicknessInwards = false, bool thicknessOutwards = false) {
-        var wallGen = new WallGenerator(width, height, thickness, vertexOffset, rotation, thicknessInwards, thicknessOutwards);
-        return (wallGen.vertices, wallGen.triangles);
+    protected override void SetDefaultSettings() {
+        defaultParameters = new Dictionary<string, dynamic> {
+            {"width", 1f},
+            {"height", 1f},
+            {"thickness", 0.1f},
+            {"thicknessInwards", false},
+            {"thicknessOutwards", false}
+        };
     }
 
-    public WallGenerator(float width, float height, float thickness, Vector3 vertexOffset, Quaternion rotation, bool thicknessInwards = false, bool thicknessOutwards = false) {
-        this.width = width;
-        this.height = height;
-        this.thickness = thickness;
-        this.vertexOffset = vertexOffset;
-        this.rotation = rotation;
-        this.thicknessInwards = thicknessInwards;
-        this.thicknessOutwards = thicknessOutwards;
-        Generate();
+    protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
+        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
+        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
+        thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
+        thicknessInwards = parameters.ContainsKey("thicknessInwards") ? parameters["thicknessInwards"] : defaultParameters["thicknessInwards"];
+        thicknessOutwards = parameters.ContainsKey("thicknessOutwards") ? parameters["thicknessOutwards"] : defaultParameters["thicknessOutwards"];
     }
 
-    private void Generate() {
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
-
+    protected override void Generate() {
         // Outwards thickness
         var bottomLeft1 = Vector3.zero;
         var bottomRight1 = bottomLeft1 + Vector3.right * width;
@@ -76,39 +70,5 @@ public class WallGenerator {
         // North & South
         AddQuad(topLeft1, topLeft2, topRight2, topRight1);
         AddQuad(bottomLeft2, bottomLeft1, bottomRight1, bottomRight2);
-        
-        // Rotation & Translation
-        for (var i = 0; i < vertices.Count; i++) {
-            vertices[i] = rotation * vertices[i];
-            vertices[i] += vertexOffset;
-        }
-    }
-
-    private void AddQuad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3) {
-        var quadIndex = vertices.Count;
-
-        vertices.Add(v0);
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
-
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 1);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex + 3);
-    }
-
-    private void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, bool flip) {
-        var triangleIndex = vertices.Count;
-
-        vertices.Add(v0);
-        vertices.Add(v1);
-        vertices.Add(v2);
-
-        triangles.Add(triangleIndex);
-        triangles.Add(triangleIndex + 1);
-        triangles.Add(triangleIndex + 2);
     }
 }

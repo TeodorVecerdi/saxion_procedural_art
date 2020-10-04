@@ -39,13 +39,13 @@ Material:
     - _BaseColorMap0:
         m_Texture: {fileID: -3216514638523920511, guid: 6c086094effd9b14889a579778807c7a,
           type: 3}
-        m_Scale: {x: 1.25, y: 1.25}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0.5, y: 0.25}
     - _BaseColorMap1:
         m_Texture: {fileID: -3216514638523920511, guid: 6c086094effd9b14889a579778807c7a,
           type: 3}
-        m_Scale: {x: 1.25, y: 1.25}
-        m_Offset: {x: 0.5, y: -0.06}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0.5, y: -0.02}
     - _BaseColorMap2:
         m_Texture: {fileID: -3216514638523920511, guid: 6c086094effd9b14889a579778807c7a,
           type: 3}
@@ -433,9 +433,9 @@ Material:
     - _InheritBaseNormal2: 0.155
     - _InheritBaseNormal3: 0
     - _InvTilingScale: 1
-    - _InvTilingScale0: 16
-    - _InvTilingScale1: 16
-    - _InvTilingScale2: 20
+    - _InvTilingScale0: 2
+    - _InvTilingScale1: 2
+    - _InvTilingScale2: 2
     - _InvTilingScale3: 26.666668
     - _Ior: 1.5
     - _IridescenceMask: 1
@@ -457,8 +457,8 @@ Material:
     - _NormalMapSpace1: 0
     - _NormalMapSpace2: 0
     - _NormalMapSpace3: 0
-    - _NormalScale: 1
-    - _NormalScale0: 1
+    - _NormalScale: 0
+    - _NormalScale0: 2
     - _NormalScale1: 2
     - _NormalScale2: 2
     - _NormalScale3: 1
@@ -519,11 +519,11 @@ Material:
     - _TessellationMode: 0
     - _TessellationShapeFactor: 0.75
     - _TexWorldScale: 1
-    - _TexWorldScale0: 0.05
-    - _TexWorldScale1: 0.05
-    - _TexWorldScale2: 0.05
+    - _TexWorldScale0: 0.5
+    - _TexWorldScale1: 0.5
+    - _TexWorldScale2: 0.5
     - _TexWorldScale3: 0.05
-    - _TexWorldScaleBlendMask: 0.01
+    - _TexWorldScaleBlendMask: 0.31
     - _TexWorldScaleEmissive: 1
     - _Thickness: 1
     - _Thickness0: 1

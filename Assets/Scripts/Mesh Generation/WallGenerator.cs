@@ -3,11 +3,12 @@ using JetBrains.Annotations;
 using UnityEngine;
 
 public class WallGenerator : MeshGenerator {
-    protected float width;
-    protected float height;
-    protected float thickness;
-    protected bool thicknessInwards;
-    protected bool thicknessOutwards; // if neither of these two are set, it will be in the middle
+    private float width;
+    private float height;
+    private float thickness;
+    private bool thicknessInwards;
+    private bool thicknessOutwards; // if neither of these two are set, it will be in the middle
+    private bool flip;
 
     protected override void SetDefaultSettings() {
         defaultParameters = new Dictionary<string, dynamic> {
@@ -15,7 +16,8 @@ public class WallGenerator : MeshGenerator {
             {"height", 1f},
             {"thickness", 0.1f},
             {"thicknessInwards", false},
-            {"thicknessOutwards", false}
+            {"thicknessOutwards", false},
+            {"flip", false}
         };
     }
 
@@ -25,12 +27,13 @@ public class WallGenerator : MeshGenerator {
         thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
         thicknessInwards = parameters.ContainsKey("thicknessInwards") ? parameters["thicknessInwards"] : defaultParameters["thicknessInwards"];
         thicknessOutwards = parameters.ContainsKey("thicknessOutwards") ? parameters["thicknessOutwards"] : defaultParameters["thicknessOutwards"];
+        flip = parameters.ContainsKey("flip") ? parameters["flip"] : defaultParameters["flip"];
     }
 
     protected override void Generate() {
         // Outwards thickness
         var bottomLeft1 = Vector3.zero;
-        var bottomRight1 = bottomLeft1 + Vector3.right * width;
+        var bottomRight1 = bottomLeft1 + (flip?Vector3.left:Vector3.right) * width;
         var topLeft1 = bottomLeft1 + Vector3.up * height;
         var topRight1 = bottomRight1 + Vector3.up * height;
         var bottomLeft2 = bottomLeft1 + Vector3.forward * thickness;
@@ -60,15 +63,15 @@ public class WallGenerator : MeshGenerator {
         }
 
         // Front & Back
-        AddQuad(bottomLeft1, topLeft1, topRight1, bottomRight1);
-        AddQuad(bottomRight2, topRight2, topLeft2, bottomLeft2);
+        AddQuad(bottomLeft1, topLeft1, topRight1, bottomRight1, flip);
+        AddQuad(bottomRight2, topRight2, topLeft2, bottomLeft2, flip);
         
         // East & West
-        AddQuad(bottomRight1, topRight1, topRight2, bottomRight2);
-        AddQuad(bottomLeft2, topLeft2, topLeft1, bottomLeft1);
+        AddQuad(bottomRight1, topRight1, topRight2, bottomRight2, flip);
+        AddQuad(bottomLeft2, topLeft2, topLeft1, bottomLeft1, flip);
         
         // North & South
-        AddQuad(topLeft1, topLeft2, topRight2, topRight1);
-        AddQuad(bottomLeft2, bottomLeft1, bottomRight1, bottomRight2);
+        AddQuad(topLeft1, topLeft2, topRight2, topRight1, flip);
+        AddQuad(bottomLeft2, bottomLeft1, bottomRight1, bottomRight2, flip);
     }
 }

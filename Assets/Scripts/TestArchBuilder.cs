@@ -22,6 +22,7 @@ public class TestArchBuilder : MonoBehaviour {
     }
 
     private void OnDrawGizmos() {
+        return;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.color = Color.blue;
 
@@ -58,47 +59,56 @@ public class TestArchBuilder : MonoBehaviour {
         var c3 = new Vector3(0, Height, Length);
 
         var step = 180f / (Points - 1) * Mathf.Deg2Rad;
-        for (var val = 0f; val <= Mathf.PI - (step / 4f); val += step) {
-            var x = ((Mathf.Cos(val) + 1) / 2f) * Width;
-            var y = Mathf.Sin(val) * Height;
-            var x2 = ((Mathf.Cos(val + step) + 1) / 2f) * Width;
-            var y2 = Mathf.Sin(val + step) * Height;
+        for (var val = 0f; val <= Mathf.PI/2f - (step / 4f); val += step) {
+            var x = ((Mathf.Cos(val) + 1) / 2f) * Width - Width/2f;
+            var y = 1 - Mathf.Sin(val) * Height;
+            var x2 = ((Mathf.Cos(val + step) + 1) / 2f) * Width-Width/2f;
+            var y2 = 1 - Mathf.Sin(val + step) * Height;
 
             var p0 = new Vector3(x, y, 0);
             var p1 = new Vector3(x2, y2, 0);
             var p2 = new Vector3(x2, y2, Length);
             var p3 = new Vector3(x, y, Length);
-            AddQuad(p3, p2, p1, p0);
+            AddQuad(p3, p2, p1, p0, true);
+        }
+        for (var val = Mathf.PI/2f; val <= Mathf.PI - (step / 4f); val += step) {
+            var x = ((Mathf.Cos(val) + 1) / 2f) * Width + Width/2f;
+            var y = 1 - Mathf.Sin(val) * Height;
+            var x2 = ((Mathf.Cos(val + step) + 1) / 2f) * Width+Width/2f;
+            var y2 = 1 - Mathf.Sin(val + step) * Height;
+
+            var p0 = new Vector3(x, y, 0);
+            var p1 = new Vector3(x2, y2, 0);
+            var p2 = new Vector3(x2, y2, Length);
+            var p3 = new Vector3(x, y, Length);
+            AddQuad(p3, p2, p1, p0, true);
             
-            if (Points % 2 == 0 && Math.Abs(y - y2) < 0.00001f) {
-                var t0 = new Vector3(x, Height, 0);
-                var t1 = new Vector3(x2, Height, 0);
-                var t2 = new Vector3(x2, Height, Length);
-                var t3 = new Vector3(x, Height, Length);
-                AddQuad(p1, t1, t0, p0);
-                AddQuad(p3, t3, t2, p2);
-                AddTriangle(p1, c0, t1);
-                AddTriangle(p0, t0, c1);
-                AddTriangle(p3, c2, t3);
-                AddTriangle(p2, t2, c3);
-                // AddTriangle(p0, t0, c1);
-                // AddTriangle(p3, c3, p2);
-                // AddTriangle(c1, p0, c0);
-                // AddTriangle(c3, p3, c2);
-            } else {
-                if ((x2 + x) / 2f >= Width / 2f) {
-                    AddTriangle(p0, p1, c1);
-                    AddTriangle(c2, p2, p3);
-                } else {
-                    AddTriangle(p0, p1, c0);
-                    AddTriangle(p3, c3,p2);
-                }
-            }
+            /*
+            var cross = Vector3.Cross(p1 - p0, p3 - p0).normalized;
+            var p02 = new Vector3(x, y, 0) - cross * Length;
+            var p12 = new Vector3(x2, y2, 0) - cross * Length;
+            var p22 = new Vector3(x2, y2, Length) - cross * Length;
+            var p32 = new Vector3(x, y, Length) - cross * Length;
+            AddQuad(p32, p22, p12, p02);*/
         }
 
-        AddQuad(c0, c3, c2, c1);
-        AddQuad(b0, b3, c3, c0);
-        AddQuad(b1, c1, c2, b2);
+        
+        for (var val = 0f; val <= Mathf.PI/2f - (step / 4f); val += step) {
+            var x = ((Mathf.Cos(val) + 1) / 2f) * Width - Width/2f;
+            var y = Mathf.Sin(Mathf.PI - val) * (Height);
+            var x2 = ((Mathf.Cos(val + step) + 1) / 2f) * Width-Width/2f;
+            var y2 = Mathf.Sin(Mathf.PI - val + step) * (Height);
+
+            var p0 = new Vector3(x, y - Length, 0);
+            var p1 = new Vector3(x2, y2 - Length, 0);
+            var p2 = new Vector3(x2, y2 - Length, Length);
+            var p3 = new Vector3(x, y - Length, Length);
+            AddQuad(p3, p2, p1, p0, true);
+        }
+
+        // AddQuad(c0, c3, c2, c1);
+        // AddQuad(b0, b3, c3, c0);
+        // AddQuad(b1, c1, c2, b2);
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();

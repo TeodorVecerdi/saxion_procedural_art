@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SimpleGeneratorSettings
   m_EditorClassIdentifier: 
   GeneralSettings:
-    Seed: 0
+    Seed: 637375216473307255
     AutoSeed: 1
     SquareChance: 0
     LChance: 1
@@ -25,8 +25,8 @@ MonoBehaviour:
     OverhangChance: 0
   LBuildingSettings:
     MinMaxHeight: {x: 7, y: 12}
-    MinMaxWidthA: {x: 5, y: 9}
-    MinMaxLengthA: {x: 5, y: 8}
+    MinMaxWidthA: {x: 4, y: 6}
+    MinMaxLengthA: {x: 4, y: 6}
     MinMaxWidthB: {x: 3, y: 6}
     MinMaxLengthB: {x: 3, y: 5}
     OverhangMinMaxStart: {x: 2, y: 4}

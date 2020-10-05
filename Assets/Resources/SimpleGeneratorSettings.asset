@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GeneralSettings:
     Seed: 0
-    AutoSeed: 1
+    AutoSeed: 0
     SquareChance: 0
     LChance: 1
     TChance: 0

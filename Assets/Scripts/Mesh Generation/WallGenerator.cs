@@ -22,9 +22,9 @@ public class WallGenerator : MeshGenerator {
     }
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
-        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
-        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
-        thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
+        width = (parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"]) * GlobalSettings.Instance.GridSize;
+        height = (parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"]) * GlobalSettings.Instance.GridSize;
+        thickness = (parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"]) * GlobalSettings.Instance.GridSize;
         thicknessInwards = parameters.ContainsKey("thicknessInwards") ? parameters["thicknessInwards"] : defaultParameters["thicknessInwards"];
         thicknessOutwards = parameters.ContainsKey("thicknessOutwards") ? parameters["thicknessOutwards"] : defaultParameters["thicknessOutwards"];
         flip = parameters.ContainsKey("flip") ? parameters["flip"] : defaultParameters["flip"];

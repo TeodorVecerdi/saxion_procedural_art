@@ -17,8 +17,8 @@ public class PillarGenerator : MeshGenerator {
     }
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
-        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
-        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
+        width = (parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"]) * GlobalSettings.Instance.GridSize;
+        height = (parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"]) * GlobalSettings.Instance.GridSize;
         thicknessInwards = parameters.ContainsKey("thicknessInwards") ? parameters["thicknessInwards"] : defaultParameters["thicknessInwards"];
         thicknessOutwards = parameters.ContainsKey("thicknessOutwards") ? parameters["thicknessOutwards"] : defaultParameters["thicknessOutwards"];
     }

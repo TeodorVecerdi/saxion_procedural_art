@@ -43,14 +43,12 @@ public class RandomSettings : ScriptableObject {
         public Vector3Int MinSize;
         public Vector3Int MaxSize;
         [Space]
-        public Vector2Int OverhangMinMax;
         public float OverhangChance;
 
         public SquareBuildingSettingsData Clone() {
             var sbs = new SquareBuildingSettingsData {
                 MinSize = MinSize,
                 MaxSize = MaxSize,
-                OverhangMinMax = OverhangMinMax,
                 OverhangChance = OverhangChance
             };
             return sbs;

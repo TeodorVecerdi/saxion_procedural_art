@@ -19,8 +19,8 @@ public class PlaneGenerator : MeshGenerator {
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
         orientation = parameters.ContainsKey("orientation") ? parameters["orientation"] : defaultParameters["orientation"];
-        sizeA = parameters.ContainsKey("sizeA") ? parameters["sizeA"] : defaultParameters["sizeA"];
-        sizeB = parameters.ContainsKey("sizeB") ? parameters["sizeB"] : defaultParameters["sizeB"];
+        sizeA = (parameters.ContainsKey("sizeA") ? parameters["sizeA"] : defaultParameters["sizeA"]) * GlobalSettings.Instance.GridSize;
+        sizeB = (parameters.ContainsKey("sizeB") ? parameters["sizeB"] : defaultParameters["sizeB"]) * GlobalSettings.Instance.GridSize;
         flip = parameters.ContainsKey("flip") ? parameters["flip"] : defaultParameters["flip"];
     }
 

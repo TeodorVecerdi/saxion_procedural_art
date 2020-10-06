@@ -23,7 +23,63 @@ public class Arr2d<T> : IEnumerable<T> {
             FillAll(initialValue);
         }
     }
-    
+
+    public void Shrink(int dimension, int size, bool reverseSide = false) {
+        if (size == 0) return;
+        var newLength1 = length1;
+        var newLength2 = length2;
+        var dimensionVec = new Vector2Int(0, 0);
+        switch (dimension) {
+            case 1:
+                newLength1 += size;
+                dimensionVec.x = size;
+                break;
+            case 2:
+                newLength2 += size;
+                dimensionVec.y = size;
+                break;
+            default:
+                throw new InvalidOperationException($"Invalid dimension {dimension}. Should be one of: [1, 2].");
+        }
+
+        var arrTemp = new T[newLength1][];
+        for (int i = 0; i < newLength1; i++) {
+            arrTemp[i] = new T[newLength2];
+            for (int j = 0; j < newLength2; j++) {
+                if (!reverseSide) arrTemp[i][j] = arr[i][j];
+                else arrTemp[i][j] = arr[i + dimensionVec.x][j + dimensionVec.y];
+            }
+        }
+
+        arr = arrTemp;
+        length1 = newLength1;
+        length2 = newLength2;
+    }
+
+    public void FlipX() {
+        var arrTemp = new T[length1][];
+        for (int i = 0; i < length1; i++) {
+            arrTemp[i] = new T[length2];
+            for (int j = 0; j < length2; j++) {
+                arrTemp[i][j] = arr[length1-i-1][j];
+            }
+        }
+
+        arr = arrTemp;
+    }
+    public void FlipY() {
+        var arrTemp = new T[length1][];
+        for (int i = 0; i < length1; i++) {
+            arrTemp[i] = new T[length2];
+            for (int j = 0; j < length2; j++) {
+                arrTemp[i][j] = arr[i][length2-j-1];
+            }
+        }
+
+        arr = arrTemp;
+    }
+
+
     public void Expand(int dimension, int size, bool reverseSide = false, T value = default) {
         if (size == 0) return;
         var newLength1 = length1;
@@ -45,9 +101,9 @@ public class Arr2d<T> : IEnumerable<T> {
         var arrTemp = new T[newLength1][];
         for (int i = 0; i < newLength1; i++) {
             arrTemp[i] = new T[newLength2];
-                if (!EqualityComparer<T>.Default.Equals(value, default))
-                    for (int j = 0; j < newLength2; j++)
-                        arrTemp[i][j] = value;
+            if (!EqualityComparer<T>.Default.Equals(value, default))
+                for (int j = 0; j < newLength2; j++)
+                    arrTemp[i][j] = value;
         }
 
         for (int i = 0; i < length1; i++)

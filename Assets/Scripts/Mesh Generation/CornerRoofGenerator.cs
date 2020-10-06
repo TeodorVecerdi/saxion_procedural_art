@@ -115,13 +115,13 @@ public class CornerRoofGenerator : MeshGenerator {
     }
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
-        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
-        length = parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"];
-        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
-        thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
+        width = (parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"]) * GlobalSettings.Instance.GridSize;
+        length = (parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"]) * GlobalSettings.Instance.GridSize;
+        height = (parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"]) * GlobalSettings.Instance.GridSize;
+        thickness = (parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"]) * GlobalSettings.Instance.GridSize;
         thicknessBasedOnRoofAngle = parameters.ContainsKey("thicknessBasedOnRoofAngle") ? parameters["thicknessBasedOnRoofAngle"] : defaultParameters["thicknessBasedOnRoofAngle"];
         addCap = parameters.ContainsKey("addCap") ? parameters["addCap"] : defaultParameters["addCap"];
-        capOffset = parameters.ContainsKey("capOffset") ? parameters["capOffset"] : defaultParameters["capOffset"];
+        capOffset = (parameters.ContainsKey("capOffset") ? parameters["capOffset"] : defaultParameters["capOffset"]) * GlobalSettings.Instance.GridSize;
         flipX = parameters.ContainsKey("flipX") ? parameters["flipX"] : defaultParameters["flipX"];
         flipZ = parameters.ContainsKey("flipZ") ? parameters["flipZ"] : defaultParameters["flipZ"];
         joinCaps = parameters.ContainsKey("joinCaps") ? parameters["joinCaps"] : defaultParameters["joinCaps"];

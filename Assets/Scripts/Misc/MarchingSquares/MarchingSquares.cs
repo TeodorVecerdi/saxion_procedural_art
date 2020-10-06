@@ -9,8 +9,21 @@ public class MarchingSquares {
         
         var x = 0;
         var y = 0;
-        var previous = Vector2Int.zero;
+        while (!data[x, y]) {
+            x++;
+            if (x >= data.Length1) {
+                x = 0;
+                y++;
+            }
 
+            if (y >= data.Length2) {
+                Debug.LogError("MarchingSquares could not find valid path.");
+                return new List<Vector2Int>();
+            }
+        }
+        var previous = Vector2Int.zero;
+        var startX = x;
+        var startY = y;
         do {
             Vector2Int current;
             switch (Value(x, y, data)) {
@@ -33,7 +46,7 @@ public class MarchingSquares {
             x += current.x;
             y += current.y;
             previous = current;
-        } while (x != 0 || y != 0);
+        } while (x != startX || y != startY);
         
         return Path.SimplifyPath(directions);
     }

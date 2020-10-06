@@ -35,82 +35,19 @@ public class StraightRoofGenerator : MeshGenerator {
     }
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
-        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
-        length = parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"];
-        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
-        thickness = parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"];
-        extrusion = parameters.ContainsKey("extrusion") ? parameters["extrusion"] : defaultParameters["extrusion"];
+        width = (parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"]) * GlobalSettings.Instance.GridSize;
+        length = (parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"]) * GlobalSettings.Instance.GridSize;
+        height = (parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"]) * GlobalSettings.Instance.GridSize;
+        thickness = (parameters.ContainsKey("thickness") ? parameters["thickness"] : defaultParameters["thickness"]) * GlobalSettings.Instance.GridSize;
+        extrusion = (parameters.ContainsKey("extrusion") ? parameters["extrusion"] : defaultParameters["extrusion"]) * GlobalSettings.Instance.GridSize;
         extrusionLeft = parameters.ContainsKey("extrusionLeft") ? parameters["extrusionLeft"] : defaultParameters["extrusionLeft"];
         extrusionRight = parameters.ContainsKey("extrusionRight") ? parameters["extrusionRight"] : defaultParameters["extrusionRight"];
         thicknessBasedOnRoofAngle = parameters.ContainsKey("thicknessBasedOnRoofAngle") ? parameters["thicknessBasedOnRoofAngle"] : defaultParameters["thicknessBasedOnRoofAngle"];
         addCap = parameters.ContainsKey("addCap") ? parameters["addCap"] : defaultParameters["addCap"];
-        capOffset = parameters.ContainsKey("capOffset") ? parameters["capOffset"] : defaultParameters["capOffset"];
+        capOffset = (parameters.ContainsKey("capOffset") ? parameters["capOffset"] : defaultParameters["capOffset"]) * GlobalSettings.Instance.GridSize;
         flip = parameters.ContainsKey("flip") ? parameters["flip"] : defaultParameters["flip"];
         closeRoof = parameters.ContainsKey("closeRoof") ? parameters["closeRoof"] : defaultParameters["closeRoof"];
     }
-
-    /*
-    private void OnDrawGizmos() {
-        var cap10 = new Vector3(0, RoofThickness, 0);
-        var cap11 = new Vector3(Flip ? -RoofWidth : RoofWidth, RoofThickness, 0);
-        var cap12 = new Vector3(Flip ? -RoofWidth : RoofWidth, 0, 0);
-        var cap13 = new Vector3(0, 0, 0);
-        var cap20 = new Vector3(0, RoofHeight - RoofThickness, RoofLength);
-        var cap21 = new Vector3(Flip ? -RoofWidth : RoofWidth, RoofHeight - RoofThickness, RoofLength);
-        var cap22 = new Vector3(Flip ? -RoofWidth : RoofWidth, RoofHeight, RoofLength);
-        var cap23 = new Vector3(0, RoofHeight, RoofLength);
-        var cap30 = new Vector3(0 + CapOffset.z, CapOffset.y, -RoofThickness + CapOffset.x);
-        var cap31 = new Vector3(Flip ? -RoofWidth : RoofWidth + CapOffset.z, CapOffset.y, -RoofThickness + CapOffset.x);
-
-        if (ThicknessBasedOnRoofAngle) {
-            var v1 = cap11 - cap12;
-            var v2 = cap21 - cap12;
-            var angle = Mathf.Deg2Rad * Vector3.Angle(v1, v2);
-            var multiplier = 1f / Mathf.Sin(angle);
-            var actualRoofThickness = RoofThickness * multiplier;
-            cap10.y = actualRoofThickness;
-            cap11.y = actualRoofThickness;
-            cap20.y = RoofHeight - actualRoofThickness;
-            cap21.y = RoofHeight - actualRoofThickness;
-            cap30.z = -actualRoofThickness + CapOffset.x;
-            cap31.z = -actualRoofThickness + CapOffset.x;
-        }
-
-        Gizmos.color = Color.red;
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawWireSphere(cap10, 0.05f);
-        Gizmos.DrawWireSphere(cap11, 0.05f);
-        Gizmos.DrawWireSphere(cap12, 0.05f);
-        Gizmos.DrawWireSphere(cap13, 0.05f);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(cap20, 0.05f);
-        Gizmos.DrawWireSphere(cap21, 0.05f);
-        Gizmos.DrawWireSphere(cap22, 0.05f);
-        Gizmos.DrawWireSphere(cap23, 0.05f);
-        Gizmos.color = Color.green;
-        if (AddCap) {
-            Gizmos.DrawWireSphere(cap30, 0.05f);
-            Gizmos.DrawWireSphere(cap31, 0.05f);
-        }
-
-        var guiStyle = new GUIStyle {fontSize = 16, fontStyle = FontStyle.Bold, normal = {textColor = Color.white}};
-        Handles.matrix = transform.localToWorldMatrix;
-        Handles.Label(cap10, "1.0", guiStyle);
-        Handles.Label(cap11, "1.1", guiStyle);
-        Handles.Label(cap12, "1.2", guiStyle);
-        Handles.Label(cap13, "1.3", guiStyle);
-
-        Handles.Label(cap20, "2.0", guiStyle);
-        Handles.Label(cap21, "2.1", guiStyle);
-        Handles.Label(cap22, "2.2", guiStyle);
-        Handles.Label(cap23, "2.3", guiStyle);
-
-        if (AddCap) {
-            Handles.Label(cap30, "3.0", guiStyle);
-            Handles.Label(cap31, "3.1", guiStyle);
-        }
-    }
-    */
 
     protected override void Generate() {
         var cap10 = new Vector3(extrusionLeft ? (flip ? extrusion : -extrusion) : 0, thickness, 0);

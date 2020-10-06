@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class MeshUtils {
-    public static (List<Vector3>, List<int>) Combine(params (List<Vector3>, List<int>)[] lists) {
+    public static (List<Vector3> vertices, List<int> triangles) Combine(params (List<Vector3>, List<int>)[] lists) {
         var combinedT1 = new List<Vector3>();
         var combinedT2 = new List<int>();
         combinedT1.AddRange(lists[0].Item1);
@@ -22,7 +22,7 @@ public static class MeshUtils {
         return (combinedT1, combinedT2);
     }
     
-    public static (List<Vector3>, List<int>) Combine(List<(List<Vector3>, List<int>)> lists) {
+    public static (List<Vector3> vertices, List<int> triangles) Combine(List<(List<Vector3>, List<int>)> lists) {
         var combinedT1 = new List<Vector3>();
         var combinedT2 = new List<int>();
         combinedT1.AddRange(lists[0].Item1);

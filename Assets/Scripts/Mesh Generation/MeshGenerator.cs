@@ -36,7 +36,7 @@ public abstract class MeshGenerator {
 
     private void ApplyTransformation() {
         for (var i = 0; i < vertices.Count; i++) {
-            vertices[i] = rotation * vertices[i] + position;
+            vertices[i] = rotation * vertices[i] + position * GlobalSettings.Instance.GridSize;
         }
     }
     

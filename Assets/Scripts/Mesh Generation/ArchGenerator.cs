@@ -17,9 +17,9 @@ public class ArchGenerator : MeshGenerator {
     }
 
     protected override void DeconstructSettings(Dictionary<string, dynamic> parameters) {
-        width = parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"];
-        height = parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"];
-        length = parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"];
+        width = (parameters.ContainsKey("width") ? parameters["width"] : defaultParameters["width"]) * GlobalSettings.Instance.GridSize;
+        height = (parameters.ContainsKey("height") ? parameters["height"] : defaultParameters["height"]) * GlobalSettings.Instance.GridSize;
+        length = (parameters.ContainsKey("length") ? parameters["length"] : defaultParameters["length"]) * GlobalSettings.Instance.GridSize;
         points = parameters.ContainsKey("points") ? parameters["points"] : defaultParameters["points"];
     }
 

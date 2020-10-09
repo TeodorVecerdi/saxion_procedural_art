@@ -53,6 +53,9 @@ public abstract class MeshGenerator {
             meshData.Vertices.Add(v3);
         }
 
+        var uvs = UVUtils.QuadUVS(v0, v1, v2, v3, uvSettings);
+        meshData.UVs.AddRange(uvs);
+
         if(!meshData.Triangles.ContainsKey(submesh)) meshData.Triangles[submesh] = new List<int>();
         meshData.Triangles[submesh].Add(quadIndex);
         meshData.Triangles[submesh].Add(quadIndex + 1);
@@ -64,17 +67,23 @@ public abstract class MeshGenerator {
 
     protected void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, int submesh, bool flip = false, UVSettings uvSettings = Default) {
         var triangleIndex = meshData.Vertices.Count;
+        
         if (flip) {
             meshData.Vertices.Add(v2);
             meshData.Vertices.Add(v1);
             meshData.Vertices.Add(v0);
+            // var uvs = UVUtils.TriangleUVS2(v2, v1, v0, uvSettings, flip);
+            // meshData.UVs.AddRange(uvs);
         } else {
             meshData.Vertices.Add(v0);
             meshData.Vertices.Add(v1);
             meshData.Vertices.Add(v2);
+            
         }
-        if(!meshData.Triangles.ContainsKey(submesh)) meshData.Triangles[submesh] = new List<int>();
 
+        var uvs = UVUtils.TriangleUVS2(v0, v1, v2, uvSettings, position);
+        meshData.UVs.AddRange(uvs);
+        if(!meshData.Triangles.ContainsKey(submesh)) meshData.Triangles[submesh] = new List<int>();
         meshData.Triangles[submesh].Add(triangleIndex);
         meshData.Triangles[submesh].Add(triangleIndex + 1);
         meshData.Triangles[submesh].Add(triangleIndex + 2);
@@ -87,6 +96,8 @@ public abstract class MeshGenerator {
         FlipVertical = 2,
         Rotate = 4,
         TriangleMiddle = 8,
+        FlipTopPart = 16,
+        FlipBottomPart = 32
     }
 
     public const UVSettings Default = UVSettings.None;

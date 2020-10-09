@@ -37,8 +37,8 @@ ScriptedImporter:
     shaderName: HDRP/LitTessellation
     materialProperties:
       shader: {fileID: 4800000, guid: 756bac9090102564582875f4c7e30202, type: 3}
-      shaderKeywords: _DISPLACEMENT_LOCK_TILING_SCALE _HEIGHTMAP _MAPPING_TRIPLANAR
-        _MASKMAP _NORMALMAP _NORMALMAP_TANGENT_SPACE _NORMALMAP_TANGENT_SPACE0 _NORMALMAP_TANGENT_SPACE1
+      shaderKeywords: _DISPLACEMENT_LOCK_TILING_SCALE _HEIGHTMAP _MASKMAP _NORMALMAP
+        _NORMALMAP_TANGENT_SPACE _NORMALMAP_TANGENT_SPACE0 _NORMALMAP_TANGENT_SPACE1
         _NORMALMAP_TANGENT_SPACE2 _NORMALMAP_TANGENT_SPACE3 _SPECULARCOLORMAP _TESSELLATION_DISPLACEMENT
         _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
       lightmapFlags: 4
@@ -366,7 +366,7 @@ ScriptedImporter:
       - name: _TransparentZWrite
         float: 0
       - name: _UVBase
-        float: 5
+        float: 1
       - name: _UVDetail
         float: 0
       - name: _UVEmissive
@@ -415,7 +415,7 @@ ScriptedImporter:
       - name: _UVDetailsMappingMask
         color: {r: 1, g: 0, b: 0, a: 0}
       - name: _UVMappingMask
-        color: {r: 0, g: 0, b: 0, a: 0}
+        color: {r: 0, g: 1, b: 0, a: 0}
       - name: _UVMappingMaskEmissive
         color: {r: 1, g: 0, b: 0, a: 0}
     outputDescList:
@@ -619,7 +619,7 @@ ScriptedImporter:
       textureWidth: 512
       textureHeight: 512
       textureFormatMode: 0
-      normalCompressed: 0
+      normalCompressed: 1
       bGenerateOnLoad: 1
     material: {fileID: -6215202911988651965, guid: 6c086094effd9b14889a579778807c7a, type: 3}
     generatedTextures:

@@ -82,19 +82,28 @@ public class StraightRoofBuilder : MonoBehaviour {
 
         var guiStyle = new GUIStyle {fontSize = 16, fontStyle = FontStyle.Bold, normal = {textColor = Color.white}};
         Handles.matrix = transform.localToWorldMatrix;
-        Handles.Label(cap10, "1.0", guiStyle);
-        Handles.Label(cap11, "1.1", guiStyle);
-        Handles.Label(cap12, "1.2", guiStyle);
-        Handles.Label(cap13, "1.3", guiStyle);
-
-        Handles.Label(cap20, "2.0", guiStyle);
-        Handles.Label(cap21, "2.1", guiStyle);
-        Handles.Label(cap22, "2.2", guiStyle);
-        Handles.Label(cap23, "2.3", guiStyle);
+        // Handles.Label(cap10, "1.0", guiStyle);
+        // Handles.Label(cap11, "1.1", guiStyle);
+        // Handles.Label(cap12, "1.2", guiStyle);
+        // Handles.Label(cap13, "1.3", guiStyle);
+        //
+        // Handles.Label(cap20, "2.0", guiStyle);
+        // Handles.Label(cap21, "2.1", guiStyle);
+        // Handles.Label(cap22, "2.2", guiStyle);
+        // Handles.Label(cap23, "2.3", guiStyle);
 
         if (AddCap) {
             Handles.Label(cap30, "3.0", guiStyle);
             Handles.Label(cap31, "3.1", guiStyle);
+        }
+        
+        if (CloseRoof) {
+            Handles.Label(cap40, "4.0", guiStyle);
+            Handles.Label(cap41, "4.1", guiStyle);
+            Handles.Label(cap42, "4.2", guiStyle);
+            Handles.Label(cap50, "5.0", guiStyle);
+            Handles.Label(cap51, "5.1", guiStyle);
+            Handles.Label(cap52, "5.2", guiStyle);
         }
     }
 
@@ -113,10 +122,14 @@ public class StraightRoofBuilder : MonoBehaviour {
             {"closeRoof", CloseRoof}
         });
         var mesh = new Mesh {name = "Straight Roof"};
+        mesh.subMeshCount = meshData.Triangles.Keys.Count;
         mesh.SetVertices(meshData.Vertices);
         foreach(var key in meshData.Triangles.Keys)
             mesh.SetTriangles(meshData.Triangles[key], key);
+        mesh.SetUVs(0, meshData.UVs);
         mesh.RecalculateNormals();
-        meshFilter.mesh = mesh;
+        if(meshFilter.sharedMesh != null)
+            DestroyImmediate(meshFilter.sharedMesh);
+        meshFilter.sharedMesh = mesh;
     }
 }

@@ -82,8 +82,9 @@ public class CornerRoofGenerator : MeshGenerator {
 
         AddQuad(cap10, cap11, cap12, cap13, 1, flipX ^ flipZ);
         AddQuad(cap20, cap21, cap22, cap23, 1, flipX ^ flipZ);
-        AddTriangle(cap10, cap50, cap11, 1, flipX ^ flipZ);
+        AddTriangle(cap11, cap50, cap21, 1, !(flipX ^ flipZ), UVSettings.FlipBottomPart);
         AddTriangle(cap20, cap50, cap21, 1, flipX ^ flipZ);
+        
         AddQuad(cap11, cap50, cap51, cap12, 1, flipX ^ flipZ);
         AddQuad(cap50, cap20, cap23, cap51, 1, flipX ^ flipZ);
         AddTriangle(cap22, cap12, cap51, 1, flipX ^ flipZ);

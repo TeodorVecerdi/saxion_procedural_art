@@ -107,10 +107,13 @@ public class CornerRoofBuilder : MonoBehaviour {
             {"joinCaps", JoinCaps},
         });
         var mesh = new Mesh {name = "Corner Roof"};
+        mesh.subMeshCount = meshData.Triangles.Keys.Count;
         mesh.SetVertices(meshData.Vertices);
-        foreach(var key in meshData.Triangles.Keys)
-            mesh.SetTriangles(meshData.Triangles[key], key);
+        mesh.SetTriangles(meshData.Triangles[1], 0);
         mesh.RecalculateNormals();
-        meshFilter.mesh = mesh;
+        mesh.SetUVs(0, meshData.UVs);
+        if(meshFilter.sharedMesh != null)
+            DestroyImmediate(meshFilter.sharedMesh);
+        meshFilter.sharedMesh = mesh;
     }
 }

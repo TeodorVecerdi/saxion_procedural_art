@@ -145,13 +145,13 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
   rayLength:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
     min: 0
     max: 50
   sampleCount:
     m_OverrideState: 1
-    m_Value: 7
+    m_Value: 4
     min: 1
     max: 64
   denoise:
@@ -198,14 +198,14 @@ MonoBehaviour:
   active: 1
   m_AdvancedMode: 0
   quality:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   spectralLut:
     m_OverrideState: 0
     m_Value: {fileID: 0}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.05
+    m_Value: 0.1
     min: 0
     max: 1
   m_MaxSamples:
@@ -237,7 +237,7 @@ MonoBehaviour:
       m_Bits: 4294967295
   rayLength:
     m_OverrideState: 0
-    m_Value: 29.7
+    m_Value: 0.001
     min: 0.001
     max: 50
   clampValue:
@@ -258,7 +258,7 @@ MonoBehaviour:
     max: 4
   sampleCount:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 4
     min: 1
     max: 32
   bounceCount:
@@ -387,7 +387,7 @@ MonoBehaviour:
     m_Value: 1
   fixedExposure:
     m_OverrideState: 1
-    m_Value: 8.5
+    m_Value: 8.75
   compensation:
     m_OverrideState: 0
     m_Value: 0
@@ -462,7 +462,7 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.355
     min: 0
     max: 1
   smoothness:

@@ -86,23 +86,23 @@ public class StraightRoofGenerator : MeshGenerator {
             cap51.y = height - actualRoofThickness;
         }
 
-        AddQuad(cap10, cap11, cap12, cap13, 1, flip);
-        AddQuad(cap20, cap21, cap22, cap23, 1, flip);
-        AddQuad(cap13, cap12, cap21, cap20, 1, flip);
-        AddQuad(cap12, cap11, cap22, cap21, 1, flip);
-        AddQuad(cap10, cap13, cap20, cap23, 1, flip);
-        AddQuad(cap11, cap10, cap23, cap22, 1, flip);
+        AddQuad(cap10, cap11, cap12, cap13, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap20, cap21, cap22, cap23, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap13, cap12, cap21, cap20, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap12, cap11, cap22, cap21, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap10, cap13, cap20, cap23, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap11, cap10, cap23, cap22, 1, flip, UVSettings.FlipHorizontal);
 
         if (addCap) {
             AddTriangle(cap12, cap31, cap11, 1, flip);
             AddTriangle(cap13, cap10, cap30, 1, flip);
-            AddQuad(cap12, cap13, cap30, cap31, 1, flip);
-            AddQuad(cap10, cap11, cap31, cap30, 1, flip);
+            AddQuad(cap12, cap13, cap30, cap31, 1, flip, UVSettings.FlipHorizontal);
+            AddQuad(cap10, cap11, cap31, cap30, 1, flip, UVSettings.FlipHorizontal);
         }
 
         if (closeRoof) {
-            AddTriangle(cap40, cap41, cap42, 0, flip);
-            AddTriangle(cap50, cap51, cap52, 0, !flip);
+            AddTriangle( cap42, cap41,cap40, 0, !flip, UVSettings.FlipBottomPart);
+            AddTriangle(cap52, cap51, cap50, 0, flip, UVSettings.FlipHorizontal);
         }
     }
 }

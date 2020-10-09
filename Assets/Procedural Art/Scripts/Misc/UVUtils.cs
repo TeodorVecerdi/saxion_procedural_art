@@ -69,7 +69,7 @@ public static class UVUtils {
             Swap(2, 3, uvs);
         }
 
-        if (uvSettings.HasFlag(MeshGenerator.UVSettings.Rotate90)) {
+        if (uvSettings.HasFlag(MeshGenerator.UVSettings.Rotate)) {
             var t0 = uvs[0];
             for (int i = 0; i < 3; i++) uvs[i] = uvs[i + 1];
             uvs[3] = t0;

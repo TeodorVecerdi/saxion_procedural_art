@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class MeshGenerator {
-    protected List<Vector3> vertices;
-    protected List<int> triangles;
+    protected MeshData meshData;
     protected Vector3 position;
     protected Quaternion rotation;
     protected Dictionary<string, dynamic> defaultParameters;
@@ -15,67 +15,79 @@ public abstract class MeshGenerator {
     protected abstract void Generate();
     
 
-    public static (List<Vector3> vertices, List<int> triangles) GetMesh<T>(Vector3 position, Quaternion rotation, Dictionary<string, dynamic> parameters) where T : MeshGenerator, new() {
+    public static MeshData GetMesh<T>(Vector3 position, Quaternion rotation, Dictionary<string, dynamic> parameters) where T : MeshGenerator, new() {
         var generator = new T();
         return generator.GetMesh(position, rotation, parameters);
     }
 
 
-    private (List<Vector3> vertices, List<int> triangles) GetMesh(Vector3 position, Quaternion rotation, Dictionary<string, dynamic> parameters) {
+    private MeshData GetMesh(Vector3 position, Quaternion rotation, Dictionary<string, dynamic> parameters) {
         this.position = position;
         this.rotation = rotation;
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
+        meshData = new MeshData();
         SetDefaultSettings();
         DeconstructSettings(parameters);
         ApplyCustomSettings();
         Generate();
         ApplyTransformation();
-        return (vertices, triangles);
+        return meshData;
     }
 
     private void ApplyTransformation() {
-        for (var i = 0; i < vertices.Count; i++) {
-            vertices[i] = rotation * vertices[i] + position * GlobalSettings.Instance.GridSize;
+        for (var i = 0; i < meshData.Vertices.Count; i++) {
+            meshData.Vertices[i] = rotation * meshData.Vertices[i] + position * GlobalSettings.Instance.GridSize;
         }
     }
     
-    protected void AddQuad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, bool flip = false) {
-        var quadIndex = vertices.Count;
+    protected void AddQuad(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, int submesh, bool flip = false, UVSettings uvSettings = Default) {
+        var quadIndex = meshData.Vertices.Count;
         if (flip) {
-            vertices.Add(v3);
-            vertices.Add(v2);
-            vertices.Add(v1);
-            vertices.Add(v0);
+            meshData.Vertices.Add(v3);
+            meshData.Vertices.Add(v2);
+            meshData.Vertices.Add(v1);
+            meshData.Vertices.Add(v0);
         } else {
-            vertices.Add(v0);
-            vertices.Add(v1);
-            vertices.Add(v2);
-            vertices.Add(v3);
+            meshData.Vertices.Add(v0);
+            meshData.Vertices.Add(v1);
+            meshData.Vertices.Add(v2);
+            meshData.Vertices.Add(v3);
         }
 
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 1);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex);
-        triangles.Add(quadIndex + 2);
-        triangles.Add(quadIndex + 3);
+        if(!meshData.Triangles.ContainsKey(submesh)) meshData.Triangles[submesh] = new List<int>();
+        meshData.Triangles[submesh].Add(quadIndex);
+        meshData.Triangles[submesh].Add(quadIndex + 1);
+        meshData.Triangles[submesh].Add(quadIndex + 2);
+        meshData.Triangles[submesh].Add(quadIndex);
+        meshData.Triangles[submesh].Add(quadIndex + 2);
+        meshData.Triangles[submesh].Add(quadIndex + 3);
     }
 
-    protected void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, bool flip = false) {
-        var triangleIndex = vertices.Count;
+    protected void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, int submesh, bool flip = false, UVSettings uvSettings = Default) {
+        var triangleIndex = meshData.Vertices.Count;
         if (flip) {
-            vertices.Add(v2);
-            vertices.Add(v1);
-            vertices.Add(v0);
+            meshData.Vertices.Add(v2);
+            meshData.Vertices.Add(v1);
+            meshData.Vertices.Add(v0);
         } else {
-            vertices.Add(v0);
-            vertices.Add(v1);
-            vertices.Add(v2);
+            meshData.Vertices.Add(v0);
+            meshData.Vertices.Add(v1);
+            meshData.Vertices.Add(v2);
         }
+        if(!meshData.Triangles.ContainsKey(submesh)) meshData.Triangles[submesh] = new List<int>();
 
-        triangles.Add(triangleIndex);
-        triangles.Add(triangleIndex + 1);
-        triangles.Add(triangleIndex + 2);
+        meshData.Triangles[submesh].Add(triangleIndex);
+        meshData.Triangles[submesh].Add(triangleIndex + 1);
+        meshData.Triangles[submesh].Add(triangleIndex + 2);
     }
+    
+    [Flags]
+    public enum UVSettings {
+        None = 0,
+        FlipHorizontal = 1,
+        FlipVertical = 2,
+        Rotate = 4,
+        TriangleMiddle = 8,
+    }
+
+    public const UVSettings Default = UVSettings.None;
 }

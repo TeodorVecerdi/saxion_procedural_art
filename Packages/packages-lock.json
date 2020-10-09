@@ -37,13 +37,11 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.probuilder": {
-      "version": "4.4.0",
+    "com.unity.ide.vscode": {
+      "version": "1.2.1",
       "depth": 0,
       "source": "registry",
-      "dependencies": {
-        "com.unity.settings-manager": "1.0.3"
-      },
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {

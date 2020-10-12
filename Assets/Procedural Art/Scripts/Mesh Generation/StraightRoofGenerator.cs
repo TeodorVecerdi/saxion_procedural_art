@@ -11,10 +11,10 @@ public class StraightRoofGenerator : MeshGenerator {
     private bool extrusionRight;
     private bool thicknessBasedOnRoofAngle;
     private bool closeRoof;
-    
+
     private bool addCap;
     private Vector3 capOffset;
-    
+
     private bool flip;
 
     protected override void SetDefaultSettings() {
@@ -64,11 +64,10 @@ public class StraightRoofGenerator : MeshGenerator {
         var cap40 = new Vector3(flip ? -width : width, 0, 0);
         var cap41 = new Vector3(flip ? -width : width, height - thickness, length);
         var cap42 = new Vector3(flip ? -width : width, 0, length);
-        
+
         var cap50 = new Vector3(0, 0, 0);
         var cap51 = new Vector3(0, height - thickness, length);
         var cap52 = new Vector3(0, 0, length);
-        
 
         if (thicknessBasedOnRoofAngle) {
             var v1 = cap11 - cap12;
@@ -86,12 +85,12 @@ public class StraightRoofGenerator : MeshGenerator {
             cap51.y = height - actualRoofThickness;
         }
 
-        AddQuad(cap10, cap11, cap12, cap13, 1, flip, UVSettings.FlipHorizontal);
-        AddQuad(cap20, cap21, cap22, cap23, 1, flip, UVSettings.FlipHorizontal);
-        AddQuad(cap13, cap12, cap21, cap20, 1, flip, UVSettings.FlipHorizontal);
-        AddQuad(cap12, cap11, cap22, cap21, 1, flip, UVSettings.FlipHorizontal);
-        AddQuad(cap10, cap13, cap20, cap23, 1, flip, UVSettings.FlipHorizontal);
-        AddQuad(cap11, cap10, cap23, cap22, 1, flip, UVSettings.FlipHorizontal);
+        AddQuad(cap10, cap11, cap12, cap13, 1, flip);
+        AddQuad(cap20, cap21, cap22, cap23, 1, flip);
+        AddQuad(cap13, cap12, cap21, cap20, 1, flip);
+        AddQuad(cap12, cap11, cap22, cap21, 1, flip);
+        AddQuad(cap10, cap13, cap20, cap23, 1, flip);
+        AddQuad(cap10, cap23, cap22, cap11, 1, flip);
 
         if (addCap) {
             AddTriangle(cap12, cap31, cap11, 1, flip);
@@ -101,7 +100,7 @@ public class StraightRoofGenerator : MeshGenerator {
         }
 
         if (closeRoof) {
-            AddTriangle( cap42, cap41,cap40, 0, !flip, UVSettings.FlipBottomPart);
+            AddTriangle(cap42, cap41, cap40, 0, !flip, UVSettings.FlipBottomPart);
             AddTriangle(cap52, cap51, cap50, 0, flip, UVSettings.FlipHorizontal);
         }
     }

@@ -593,43 +593,7 @@ MonoBehaviour:
   ShowPlots: 1
   UseSubgrid: 1
   IsEnabled: 1
-  Plots:
-  - Bounds:
-      serializedVersion: 2
-      x: -6
-      y: -17
-      width: 3
-      height: 4
-  - Bounds:
-      serializedVersion: 2
-      x: -13
-      y: -14
-      width: 5
-      height: 7
-  - Bounds:
-      serializedVersion: 2
-      x: 7
-      y: -14
-      width: 11
-      height: 8
-  - Bounds:
-      serializedVersion: 2
-      x: 3
-      y: -13
-      width: 4
-      height: 6
-  - Bounds:
-      serializedVersion: 2
-      x: -5
-      y: -2
-      width: 9
-      height: 3
-  - Bounds:
-      serializedVersion: 2
-      x: 20
-      y: -15
-      width: 14
-      height: 12
+  Plots: []
 --- !u!114 &569421957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,8 +845,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dea614407e24c4abede13aace8631b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridSize: 20
-  GridSubdivisionsMinor: 20
+  GridSize: 1
+  GridSubdivisionsMinor: 4
 --- !u!4 &2110695115
 Transform:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class GridGizmos : MonoBehaviour {
     public Color MinorGridLineColor;
     public bool ShowGizmos = true;
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmosSelected() {
         if (!ShowGizmos) return;
         for (var x = (float) -GridBounds.x; x <= GridBounds.x; x += GlobalSettings.Instance.GridSize) {
             Gizmos.color = MajorGridLineColor;

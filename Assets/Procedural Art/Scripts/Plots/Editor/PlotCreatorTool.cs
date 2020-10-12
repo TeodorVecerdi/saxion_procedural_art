@@ -122,6 +122,9 @@ public class PlotCreatorTool : EditorTool {
             var point = Vector3.zero;
             if (Physics.Raycast(ray, out var info)) {
                 currentPoint = info.point.ClosestGridPoint(plotCreator.UseSubgrid);
+                var size = currentPoint - startPoint;
+                var alignedSize = size.ClosestGridPoint(false);
+                currentPoint = startPoint + alignedSize;
                 point = info.point;
             }
 

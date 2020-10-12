@@ -16,15 +16,7 @@ ScriptedImporter:
     graphDescIndex: 0
     generateAllOutputs: 0
     generateMipMaps: 1
-    preset: " <sbspreset pkgurl=\"pkg://Roof_Novibad_Base\" label=\"\" >\n  <presetinput
-      identifier=\"$outputsize\" uid=\"1188226082\" type=\"8\" value=\"9,9\" />\n 
-      <presetinput identifier=\"$randomseed\" uid=\"295760496\" type=\"4\" value=\"3282\"
-      />\n  <presetinput identifier=\"roofTilesX\" uid=\"790226892\" type=\"4\" value=\"9\"
-      />\n  <presetinput identifier=\"tileDepth\" uid=\"790105203\" type=\"0\" value=\"1\"
-      />\n  <presetinput identifier=\"normalStrength\" uid=\"790314364\" type=\"0\"
-      value=\"3\" />\n  <presetinput identifier=\"scratchCount\" uid=\"790311620\"
-      type=\"0\" value=\"1\" />\n  <presetinput identifier=\"grungeBalance\" uid=\"790281867\"
-      type=\"0\" value=\"0.468\" />\n </sbspreset>\n"
+    preset: " <sbspreset pkgurl=\"pkg://Roof_Novibad_Base\" label=\"\" >\n </sbspreset>\n"
     shaderName: HDRP/LitTessellation
     materialProperties:
       shader: {fileID: 4800000, guid: 756bac9090102564582875f4c7e30202, type: 3}
@@ -355,7 +347,7 @@ ScriptedImporter:
       - name: _TransparentZWrite
         float: 0
       - name: _UVBase
-        float: 0
+        float: 1
       - name: _UVDetail
         float: 0
       - name: _UVEmissive
@@ -404,7 +396,7 @@ ScriptedImporter:
       - name: _UVDetailsMappingMask
         color: {r: 1, g: 0, b: 0, a: 0}
       - name: _UVMappingMask
-        color: {r: 1, g: 0, b: 0, a: 0}
+        color: {r: 0, g: 1, b: 0, a: 0}
       - name: _UVMappingMaskEmissive
         color: {r: 1, g: 0, b: 0, a: 0}
     outputDescList:

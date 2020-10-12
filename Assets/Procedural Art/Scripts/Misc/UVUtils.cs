@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UVUtils {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public static List<Vector2> QuadUVS(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, MeshGenerator.UVSettings uvSettings) {
+    public static List<Vector2> QuadUVS(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 worldPosition, MeshGenerator.UVSettings uvSettings) {
         var compVec = new List<Vector2>();
         var v0_1 = v0 - v0;
         var v1_1 = v1 - v0;
@@ -76,6 +76,58 @@ public static class UVUtils {
             uvs[3] = t0;
         }
 
+        var uvOffset = new Vector2(0, worldPosition.y);
+        var diffX = Mathf.Abs(v0.x) + Mathf.Abs(v1.x) + Mathf.Abs(v2.x) + Mathf.Abs(v3.x);
+        var diffZ = Mathf.Abs(v0.z) + Mathf.Abs(v1.z) + Mathf.Abs(v2.z) + Mathf.Abs(v3.z);
+        uvOffset.x = diffX > diffZ ? worldPosition.x : worldPosition.z;
+
+        uvs[0] += uvOffset;
+        uvs[1] += uvOffset;
+        uvs[2] += uvOffset;
+        uvs[3] += uvOffset;
+
+        return uvs;
+    }
+
+    public static List<Vector2> QuadUVS2(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3, Vector3 worldPosition, MeshGenerator.UVSettings uvSettings) {
+        var sizeHorizontal = (v3 - v0).magnitude;
+        var sizeVertical = (v1 - v0).magnitude;
+        if (uvSettings.HasFlag(MeshGenerator.UVSettings.Rotate)) {
+            var tmp = sizeHorizontal;
+            sizeHorizontal = sizeVertical;
+            sizeVertical = tmp;
+        }
+
+        var uvs = new List<Vector2>();
+        uvs.AddRange(new[] {Vector2.zero, Vector2.up * sizeVertical, Vector2.up * sizeVertical + Vector2.right * sizeHorizontal, Vector2.right * sizeHorizontal});
+        if (uvSettings.HasFlag(MeshGenerator.UVSettings.FlipHorizontal)) {
+            Swap(1, 2, uvs);
+            Swap(0, 3, uvs);
+        }
+
+        if (uvSettings.HasFlag(MeshGenerator.UVSettings.FlipVertical)) {
+            Swap(0, 1, uvs);
+            Swap(2, 3, uvs);
+        }
+
+        if (uvSettings.HasFlag(MeshGenerator.UVSettings.Rotate)) {
+            var t0 = uvs[0];
+            for (int i = 0; i < 3; i++) uvs[i] = uvs[i + 1];
+            uvs[3] = t0;
+        }
+
+        if (!uvSettings.HasFlag(MeshGenerator.UVSettings.NoOffset)) {
+            var uvOffset = new Vector2(0, worldPosition.y);
+            var diffX = Mathf.Max(Mathf.Abs(v1.x - v0.x), Mathf.Abs(v2.x - v0.x), Mathf.Abs(v3.x - v0.x));
+            var diffZ = Mathf.Max(Mathf.Abs(v1.z - v0.z), Mathf.Abs(v2.z - v0.z), Mathf.Abs(v3.z - v0.z));
+            uvOffset.x = diffX > diffZ ? (v3.x - v0.x < 0 ? -1 : 1) * worldPosition.x : (v3.z - v0.z < 0 ? -1 : 1) * worldPosition.z;
+
+            uvs[0] += uvOffset;
+            uvs[1] += uvOffset;
+            uvs[2] += uvOffset;
+            uvs[3] += uvOffset;
+        }
+
         return uvs;
     }
 
@@ -108,18 +160,18 @@ public static class UVUtils {
         var v21 = (v2 - v1).sqrMagnitude;
         var sortedVertices = new List<Vector3>();
         if (Math.Abs(v21 - (v10 + v20)) < 0.01f) {
-            Debug.Log("YEET");
             sortedVertices.AddRange(new[] {v0, v1, v2});
         } else if (Math.Abs(v10 - (v21 + v20)) < 0.01f) {
             sortedVertices.AddRange(new[] {v0, v1, v2});
+
             // sortedVertices.AddRange(new[] {v2, v0, v1});
         } else {
             sortedVertices.AddRange(new[] {v0, v1, v2});
+
             // sortedVertices.AddRange(new[] {v1, v2, v0});
         }
 
         if (flip) {
-            Debug.Log("Flippity flop");
             sortedVertices.Reverse();
         }
 
@@ -130,21 +182,17 @@ public static class UVUtils {
             verticalSize = (v1 - v0).magnitude;
             horizontalSize = (v2 - v0).magnitude;
             if (IsRight(sortedVertices[2], sortedVertices[0])) {
-                Debug.Log("OPTION A");
                 uvs.AddRange(new[] {Vector2.zero, Vector2.up * verticalSize, Vector2.right * horizontalSize});
             } else {
-                Debug.Log("OPTION B");
                 uvs.AddRange(new[] {Vector2.up * verticalSize + Vector2.right * horizontalSize, Vector2.right * horizontalSize, Vector2.up * verticalSize});
-                if(flip) uvs[1] = Vector2.zero;
+                if (flip) uvs[1] = Vector2.zero;
             }
         } else {
             verticalSize = (v2 - v0).magnitude;
             horizontalSize = (v1 - v0).magnitude;
             if (IsAbove(sortedVertices[2], sortedVertices[0])) {
-                Debug.Log("OPTION C");
                 uvs.AddRange(new[] {Vector2.right * horizontalSize, Vector2.zero, Vector2.up * verticalSize});
             } else {
-                Debug.Log("OPTION D");
                 uvs.AddRange(new[] {Vector2.up * verticalSize, Vector2.up * verticalSize + Vector2.right * horizontalSize, Vector2.zero});
             }
         }
@@ -166,10 +214,10 @@ public static class UVUtils {
     public static List<Vector2> TriangleUVS2(Vector3 v0, Vector3 v1, Vector3 v2, MeshGenerator.UVSettings uvSettings, Vector3 position) {
         var sizeHorizontal = (v2 - v0).magnitude;
         var sizeVertical = (v1 - v0).magnitude;
-        
+
         var uvs = new List<Vector2>();
-        uvs.AddRange(new []{Vector2.zero,Vector2.up * sizeVertical,Vector2.right * sizeHorizontal });
-        
+        uvs.AddRange(new[] {Vector2.zero, Vector2.up * sizeVertical, Vector2.right * sizeHorizontal});
+
         if (uvSettings.HasFlag(MeshGenerator.UVSettings.FlipHorizontal))
             FlipTriangleHorizontal(uvs, sizeHorizontal);
 
@@ -179,10 +227,12 @@ public static class UVUtils {
         if (uvSettings.HasFlag(MeshGenerator.UVSettings.FlipTopPart)) {
             uvs[1] += Vector2.right * sizeHorizontal;
         }
+
         if (uvSettings.HasFlag(MeshGenerator.UVSettings.FlipBottomPart)) {
             uvs[0] += Vector2.right * sizeHorizontal;
             uvs[2] -= Vector2.right * sizeHorizontal;
         }
+
         return uvs;
     }
 

@@ -52,7 +52,13 @@ public class PlotCreatorTool : EditorTool {
         if (selectedPlots.Count > 0) {
             var selectionCenter = Vector3.zero;
             foreach (var selected in selectedPlots) {
-                selectionCenter += new Vector3(plotCreator.Plots[selected].Bounds.center.x, 0, plotCreator.Plots[selected].Bounds.center.y);
+                var bounds = plotCreator.Plots[selected].Bounds;
+                selectionCenter += new Vector3(bounds.center.x, 0, bounds.center.y);
+                
+                var labelStyle = EditorStyles.largeLabel;
+                labelStyle.fontSize = 24;
+                labelStyle.fontStyle = FontStyle.Bold;
+                Handles.Label((new Vector3(bounds.x, 0, bounds.y)), $"{bounds.width} x {bounds.height}", labelStyle);
             }
 
             selectionCenter /= selectedPlots.Count;
@@ -127,6 +133,12 @@ public class PlotCreatorTool : EditorTool {
                 currentPoint = startPoint + alignedSize;
                 point = info.point;
             }
+
+            var labelStyle = EditorStyles.largeLabel;
+            labelStyle.fontSize = 24;
+            labelStyle.fontStyle = FontStyle.Bold;
+            var currentSize = (currentPoint - startPoint).Abs();
+            Handles.Label((currentPoint - Vector3.right * currentSize.x), $"{currentSize.x} x {currentSize.z}", labelStyle);
 
             Handles.color = Color.white;
             Handles.DrawSolidDisc(startPoint, info.normal, 0.2f);

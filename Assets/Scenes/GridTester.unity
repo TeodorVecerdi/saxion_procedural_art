@@ -587,13 +587,229 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 041f669b92471d542adaa8cb52d81863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalColor: {r: 0.077845246, g: 0.503, b: 0.16467261, a: 0.6666667}
+  NormalColor: {r: 0.1318975, g: 0.7169812, b: 0.2498214, a: 0.38431373}
   UnselectColor: {r: 0.7176471, g: 0.19032077, b: 0.14509802, a: 0.72156864}
-  SelectedColor: {r: 0.18316127, g: 0.7924528, b: 0.29563773, a: 1}
+  SelectedColor: {r: 0, g: 1, b: 0.18064523, a: 0.3764706}
   ShowPlots: 1
   UseSubgrid: 1
   IsEnabled: 1
-  Plots: []
+  Plots:
+  - Bounds:
+      serializedVersion: 2
+      x: -21.75
+      y: -56.5
+      width: 8
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: -26
+      y: -71
+      width: 6
+      height: 10
+  - Bounds:
+      serializedVersion: 2
+      x: -17.25
+      y: -70.25
+      width: 7
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: -9.75
+      y: -69.25
+      width: 7
+      height: 9
+  - Bounds:
+      serializedVersion: 2
+      x: -2.25
+      y: -69.25
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 3
+      y: -68.75
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 8.75
+      y: -68
+      width: 6
+      height: 9
+  - Bounds:
+      serializedVersion: 2
+      x: 14.75
+      y: -69
+      width: 5
+      height: 9
+  - Bounds:
+      serializedVersion: 2
+      x: 19.75
+      y: -67.75
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 28
+      y: -69
+      width: 6
+      height: 7
+  - Bounds:
+      serializedVersion: 2
+      x: 8.25
+      y: -74
+      width: 8
+      height: 5
+  - Bounds:
+      serializedVersion: 2
+      x: 8.25
+      y: -80
+      width: 9
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 20
+      y: -78.75
+      width: 5
+      height: 7
+  - Bounds:
+      serializedVersion: 2
+      x: 2
+      y: -91
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 7.25
+      y: -89.25
+      width: 9
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 16.75
+      y: -90.5
+      width: 8
+      height: 7
+  - Bounds:
+      serializedVersion: 2
+      x: -31.5
+      y: -71
+      width: 5
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: -39
+      y: -75.25
+      width: 7
+      height: 5
+  - Bounds:
+      serializedVersion: 2
+      x: -32
+      y: -79
+      width: 7
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: -47.5
+      y: -81.5
+      width: 8
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: -39.25
+      y: -81.75
+      width: 7
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: -32
+      y: -86.25
+      width: 6
+      height: 7
+  - Bounds:
+      serializedVersion: 2
+      x: 6.5
+      y: -36.5
+      width: 5
+      height: 7
+  - Bounds:
+      serializedVersion: 2
+      x: 27
+      y: -42
+      width: 7
+      height: 5
+  - Bounds:
+      serializedVersion: 2
+      x: 17.75
+      y: -42
+      width: 9
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 27
+      y: -36.75
+      width: 7
+      height: 9
+  - Bounds:
+      serializedVersion: 2
+      x: 17.75
+      y: -35.75
+      width: 8
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 18
+      y: -24.25
+      width: 8
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 26.25
+      y: -25
+      width: 8
+      height: 9
+  - Bounds:
+      serializedVersion: 2
+      x: 39
+      y: -32.25
+      width: 7
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 38.5
+      y: -36.5
+      width: 9
+      height: 4
+  - Bounds:
+      serializedVersion: 2
+      x: 41.25
+      y: -23
+      width: 8
+      height: 5
+  - Bounds:
+      serializedVersion: 2
+      x: 51.25
+      y: -24.5
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 56.5
+      y: -28.25
+      width: 5
+      height: 6
+  - Bounds:
+      serializedVersion: 2
+      x: 32.25
+      y: -15
+      width: 5
+      height: 8
+  - Bounds:
+      serializedVersion: 2
+      x: 37.5
+      y: -17.75
+      width: 7
+      height: 11
 --- !u!114 &569421957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,7 +824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MajorGridLineWidth: 1
   MinorGridLineWidth: 1
-  GridBounds: {x: 100, y: 100}
+  GridBounds: {x: 300, y: 300}
   MajorGridLineColor: {r: 0.48900002, g: 0.48900002, b: 0.48900002, a: 0.7647059}
   MinorGridLineColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 0.2784314}
   ShowGizmos: 1
@@ -689,7 +905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1572766710
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -701,8 +917,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5.0005503, y: 0.15000004, z: 5.000001}
-  m_Center: {x: 0.67022556, y: -0.07500002, z: 1.1600004}
+  m_Size: {x: 1, y: 0.15000004, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1572766711
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -722,9 +938,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d92ef32394b5f474385d74b565a7bdd7, type: 2}
-  - {fileID: 2100000, guid: 027cb3d3d7dc79d41ad763e01759de07, type: 2}
-  - {fileID: 2100000, guid: a0427cf339e5891468d5f2b433b2d44a, type: 2}
+  - {fileID: 2100000, guid: f6de8f22aa18ba744a6b01011bbd2b22, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -753,7 +967,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1572766709}
-  m_Mesh: {fileID: 4300002, guid: 6a3a3adae1f3844bdbb03aff7a7893e2, type: 3}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1572766713
 Transform:
   m_ObjectHideFlags: 0
@@ -761,9 +975,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1572766709}
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 400, y: 0.15, z: 400}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3

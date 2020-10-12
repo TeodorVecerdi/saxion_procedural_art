@@ -14,32 +14,182 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Plots:
   - serializedVersion: 2
-    x: -5
-    y: -16
-    width: 3
-    height: 4
+    x: -21.75
+    y: -56.5
+    width: 8
+    height: 6
   - serializedVersion: 2
-    x: -23
-    y: -2
+    x: -26
+    y: -71
+    width: 6
+    height: 10
+  - serializedVersion: 2
+    x: -17.25
+    y: -70.25
+    width: 7
+    height: 8
+  - serializedVersion: 2
+    x: -9.75
+    y: -69.25
+    width: 7
+    height: 9
+  - serializedVersion: 2
+    x: -2.25
+    y: -69.25
+    width: 5
+    height: 8
+  - serializedVersion: 2
+    x: 3
+    y: -68.75
+    width: 5
+    height: 8
+  - serializedVersion: 2
+    x: 8.75
+    y: -68
+    width: 6
+    height: 9
+  - serializedVersion: 2
+    x: 14.75
+    y: -69
+    width: 5
+    height: 9
+  - serializedVersion: 2
+    x: 19.75
+    y: -67.75
+    width: 5
+    height: 8
+  - serializedVersion: 2
+    x: 28
+    y: -69
+    width: 6
+    height: 7
+  - serializedVersion: 2
+    x: 8.25
+    y: -74
+    width: 8
+    height: 5
+  - serializedVersion: 2
+    x: 8.25
+    y: -80
+    width: 9
+    height: 6
+  - serializedVersion: 2
+    x: 20
+    y: -78.75
     width: 5
     height: 7
   - serializedVersion: 2
-    x: -16
-    y: -7
-    width: 11
+    x: 2
+    y: -91
+    width: 5
     height: 8
   - serializedVersion: 2
-    x: -14
-    y: -17
-    width: 4
+    x: 7.25
+    y: -89.25
+    width: 9
     height: 6
   - serializedVersion: 2
-    x: 0
-    y: -6
+    x: 16.75
+    y: -90.5
     width: 8
-    height: 10
+    height: 7
   - serializedVersion: 2
-    x: -15
-    y: 2
+    x: -31.5
+    y: -71
+    width: 5
+    height: 6
+  - serializedVersion: 2
+    x: -39
+    y: -75.25
+    width: 7
+    height: 5
+  - serializedVersion: 2
+    x: -32
+    y: -79
+    width: 7
+    height: 6
+  - serializedVersion: 2
+    x: -47.5
+    y: -81.5
+    width: 8
+    height: 6
+  - serializedVersion: 2
+    x: -39.25
+    y: -81.75
+    width: 7
+    height: 6
+  - serializedVersion: 2
+    x: -32
+    y: -86.25
+    width: 6
+    height: 7
+  - serializedVersion: 2
+    x: 6.5
+    y: -36.5
+    width: 5
+    height: 7
+  - serializedVersion: 2
+    x: 27
+    y: -42
+    width: 7
+    height: 5
+  - serializedVersion: 2
+    x: 17.75
+    y: -42
     width: 9
-    height: 3
+    height: 6
+  - serializedVersion: 2
+    x: 27
+    y: -36.75
+    width: 7
+    height: 9
+  - serializedVersion: 2
+    x: 17.75
+    y: -35.75
+    width: 8
+    height: 8
+  - serializedVersion: 2
+    x: 18
+    y: -24.25
+    width: 8
+    height: 6
+  - serializedVersion: 2
+    x: 26.25
+    y: -25
+    width: 8
+    height: 9
+  - serializedVersion: 2
+    x: 39
+    y: -32.25
+    width: 7
+    height: 6
+  - serializedVersion: 2
+    x: 38.5
+    y: -36.5
+    width: 9
+    height: 4
+  - serializedVersion: 2
+    x: 41.25
+    y: -23
+    width: 8
+    height: 5
+  - serializedVersion: 2
+    x: 51.25
+    y: -24.5
+    width: 5
+    height: 8
+  - serializedVersion: 2
+    x: 56.5
+    y: -28.25
+    width: 5
+    height: 6
+  - serializedVersion: 2
+    x: 32.25
+    y: -15
+    width: 5
+    height: 8
+  - serializedVersion: 2
+    x: 37.5
+    y: -17.75
+    width: 7
+    height: 11

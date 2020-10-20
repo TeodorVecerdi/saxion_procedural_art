@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 public class GridGizmos : MonoBehaviour {
+    public PlotCreator PlotCreator;
     [Header("Grid Settings")]
     [Min(1)] public float MajorGridLineWidth = 2f;
     [Min(1)] public float MinorGridLineWidth = 1f;
@@ -10,7 +11,7 @@ public class GridGizmos : MonoBehaviour {
     public Color MinorGridLineColor;
     public bool ShowGizmos = true;
 
-    private void OnDrawGizmosSelected() {
+    private void OnDrawGizmos() {
         if (!ShowGizmos) return;
         for (var x = (float) -GridBounds.x; x <= GridBounds.x; x += GlobalSettings.Instance.GridSize) {
             Gizmos.color = MajorGridLineColor;

@@ -19,6 +19,8 @@ public class PlotCreatorTool : EditorTool {
     private HashSet<int> plotsUnderSelection = new HashSet<int>();
     private int hoveredPlot = -1;
     private GUIContent iconContent;
+    private Tool currentTool;
+    private int previousSelectedGridIndex;
 
     private void OnEnable() {
         var icon = EditorGUIUtility.isProSkin ? Resources.Load<Texture2D>("PlotCreator/plotCreator_pro") : Resources.Load<Texture2D>("PlotCreator/plotCreator");
@@ -27,55 +29,123 @@ public class PlotCreatorTool : EditorTool {
             text = "Plot Creator Tool",
             tooltip = "Drag with your mouse to create rectangular plots"
         };
+        currentTool = Tool.Move;
     }
 
     public override GUIContent toolbarIcon => iconContent;
 
+    public void Clear() {
+        hoveredPlot = -1;
+        selectedPlots.Clear();
+        plotsUnderSelection.Clear();
+    }
+
     public override void OnToolGUI(EditorWindow window) {
         plotCreator = target as PlotCreator;
-
+        if (plotCreator.SelectedPlotGrid == null) return;
+        if(previousSelectedGridIndex != plotCreator.SelectedPlotGridIndex) Clear();
+        previousSelectedGridIndex = plotCreator.SelectedPlotGridIndex;
         if (plotCreator.ShowPlots) {
-            for (var i = 0; i < plotCreator.Plots.Count; i++) {
-                var color = plotCreator.NormalColor;
-                if (selectedPlots.Contains(i) || (plotsUnderSelection.Contains(i) && !isRemovingFromSelection && isDraggingSelection) || (hoveredPlot == i && !isDragging)) color = plotCreator.SelectedColor;
-                if (plotsUnderSelection.Contains(i) && isRemovingFromSelection && selectedPlots.Contains(i)) color = plotCreator.UnselectColor;
-                if (!plotCreator.IsEnabled) color = Color.gray;
-
-                var leftDown = new Vector3(plotCreator.Plots[i].Bounds.min.x, 0, plotCreator.Plots[i].Bounds.min.y);
-                var rightDown = new Vector3(plotCreator.Plots[i].Bounds.min.x + plotCreator.Plots[i].Bounds.width, 0, plotCreator.Plots[i].Bounds.min.y);
-                var rightUp = new Vector3(plotCreator.Plots[i].Bounds.min.x + plotCreator.Plots[i].Bounds.width, 0, plotCreator.Plots[i].Bounds.min.y + plotCreator.Plots[i].Bounds.height);
-                var leftUp = new Vector3(plotCreator.Plots[i].Bounds.min.x, 0, plotCreator.Plots[i].Bounds.min.y + plotCreator.Plots[i].Bounds.height);
-                Handles.DrawSolidRectangleWithOutline(new[] {leftDown, leftUp, rightUp, rightDown}, color, Color.black);
+            for (int plotI = 0; plotI < plotCreator.PlotGrids.Count; plotI++) {
+                for (var i = 0; i < plotCreator.PlotGrids[plotI].Plots.Count; i++) {
+                    Color color;
+                    if (plotI == plotCreator.SelectedPlotGridIndex) {
+                        color = plotCreator.NormalColor;
+                        if (selectedPlots.Contains(i) || (plotsUnderSelection.Contains(i) && !isRemovingFromSelection && isDraggingSelection) || (hoveredPlot == i && !isDragging)) color = plotCreator.SelectedColor;
+                        if (plotsUnderSelection.Contains(i) && isRemovingFromSelection && selectedPlots.Contains(i)) color = plotCreator.UnselectColor;
+                        if (!plotCreator.IsEnabled) color = Color.gray;
+                    } else color = plotCreator.DisabledColor(plotI);
+                    
+                    var rotated = MathUtils.RotatedRectangle(plotCreator.PlotGrids[plotI].Plots[i]);
+                    Handles.DrawSolidRectangleWithOutline(new[] {rotated.leftDown, rotated.leftUp, rotated.rightUp, rotated.rightDown}, color, Color.black);
+                }
             }
         }
 
+        if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.W) {
+            currentTool = Tool.Move;
+            Event.current.Use();
+        } else if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.E) {
+            currentTool = Tool.Rotate;
+            Event.current.Use();
+        } else if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.R) {
+            currentTool = Tool.Scale;
+            Event.current.Use();
+        }
+
         if (selectedPlots.Count > 0) {
-            var selectionCenter = Vector3.zero;
-            foreach (var selected in selectedPlots) {
-                var bounds = plotCreator.Plots[selected].Bounds;
-                selectionCenter += new Vector3(bounds.center.x, 0, bounds.center.y);
-                
-                var labelStyle = EditorStyles.largeLabel;
-                labelStyle.fontSize = 24;
-                labelStyle.fontStyle = FontStyle.Bold;
-                Handles.Label((new Vector3(bounds.x, 0, bounds.y)), $"{bounds.width} x {bounds.height}", labelStyle);
-            }
+            switch (currentTool) {
+                case Tool.Move: {
+                    var selectionCenter = Vector3.zero;
+                    foreach (var selected in selectedPlots) {
+                        var bounds = plotCreator.SelectedPlotGrid.Plots[selected].Bounds;
+                        selectionCenter += new Vector3(bounds.center.x, 0, bounds.center.y);
 
-            selectionCenter /= selectedPlots.Count;
+                        var labelStyle = EditorStyles.largeLabel;
+                        labelStyle.fontSize = 24;
+                        labelStyle.fontStyle = FontStyle.Bold;
+                        Handles.Label(new Vector3(bounds.x, 0, bounds.y), $"{bounds.width} x {bounds.height}", labelStyle);
+                    }
 
-            EditorGUI.BeginChangeCheck();
-            var offsetToGrid = selectionCenter - selectionCenter.ClosestGridPoint(plotCreator.UseSubgrid);
-            var newPosition = Handles.PositionHandle(selectionCenter, Quaternion.identity).ClosestGridPoint(plotCreator.UseSubgrid);
-            var delta = newPosition - selectionCenter + offsetToGrid;
-            var deltaV2 = new Vector2(delta.x, delta.z);
+                    selectionCenter /= selectedPlots.Count;
 
-            if (EditorGUI.EndChangeCheck()) {
-                Undo.RecordObject(plotCreator, "Moved plot");
-                foreach (var selected in selectedPlots) {
-                    plotCreator.Plots[selected].Bounds.center += deltaV2;
+                    EditorGUI.BeginChangeCheck();
+
+                    var offsetToGrid = selectionCenter - selectionCenter.ClosestGridPoint(true);
+                    var newPosition = Handles.PositionHandle(selectionCenter, Quaternion.identity).ClosestGridPoint(true);
+                    var delta = newPosition - selectionCenter + offsetToGrid;
+                    var deltaV2 = new Vector2(delta.x, delta.z);
+
+                    if (EditorGUI.EndChangeCheck()) {
+                        Undo.RecordObject(plotCreator, "Moved plot(s)");
+                        foreach (var selected in selectedPlots) {
+                            plotCreator.SelectedPlotGrid.Plots[selected].Bounds.center += deltaV2;
+                        }
+
+                        Event.current.Use();
+                    }
+
+                    break;
                 }
+                case Tool.Rotate: {
+                    var labelStyle = EditorStyles.largeLabel;
+                    labelStyle.fontSize = 24;
+                    labelStyle.fontStyle = FontStyle.Bold;
+                    foreach (var selected in selectedPlots) {
+                        var currentPlot = plotCreator.SelectedPlotGrid.Plots[selected];
+                        Handles.Label(new Vector3(currentPlot.Bounds.x, 0, currentPlot.Bounds.y), $"{currentPlot.Rotation}°", labelStyle);
+                        EditorGUI.BeginChangeCheck();
+                        var newRotation = Handles.RotationHandle(Quaternion.Euler(0, currentPlot.Rotation, 0), currentPlot.Bounds.center.ToVec3()).eulerAngles.y;
+                        if (EditorGUI.EndChangeCheck()) {
+                            Undo.RecordObject(plotCreator, "Rotated plot(s)");
+                            currentPlot.Rotation = newRotation;
+                            if (currentPlot.Rotation >= 360)
+                                currentPlot.Rotation -= 360;
 
-                Event.current.Use();
+                            Event.current.Use();
+                        }
+                    }
+
+                    break;
+                }
+                case Tool.Scale: {
+                    foreach (var selected in selectedPlots) {
+                        var currentPlot = plotCreator.SelectedPlotGrid.Plots[selected];
+                        EditorGUI.BeginChangeCheck();
+                        var scale = currentPlot.Bounds.size.ToVec3(1);
+                        var newScale = Handles.ScaleHandle(scale, currentPlot.Bounds.center.ToVec3(), Quaternion.Euler(0, currentPlot.Rotation, 0), HandleUtility.GetHandleSize(currentPlot.Bounds.center.ToVec3())).ClosestGridPoint(false);
+
+                        if (EditorGUI.EndChangeCheck()) {
+                            newScale.y = 0;
+                            if (newScale.x <= 0) newScale.x = GlobalSettings.Instance.GridSize;
+                            if (newScale.y <= 0) newScale.y = GlobalSettings.Instance.GridSize;
+                            Undo.RecordObject(plotCreator, "Scaled plot");
+                            currentPlot.Bounds.size = newScale.ToVec2();
+                        }
+                    }
+
+                    break;
+                }
             }
         }
 
@@ -87,7 +157,7 @@ public class PlotCreatorTool : EditorTool {
             selectedPlots.Clear();
             int offset = 0;
             foreach (var plot in plotsToRemove) {
-                plotCreator.Plots.RemoveAt(plot - offset);
+                plotCreator.SelectedPlotGrid.Plots.RemoveAt(plot - offset);
                 offset++;
             }
         }
@@ -95,8 +165,11 @@ public class PlotCreatorTool : EditorTool {
         if (!plotCreator.IsEnabled) return;
 
         var rayMouse = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+
+        // rayMouse.origin = rotationRev * rayMouse.origin;
+
         if (Physics.Raycast(rayMouse, out var mouseInfo)) {
-            var mousePoint = mouseInfo.point.ClosestGridPoint(plotCreator.UseSubgrid);
+            var mousePoint = mouseInfo.point.ClosestGridPoint(true);
             Handles.color = new Color(1, 1, 1, 0.1f);
             Handles.DrawSolidDisc(mousePoint, mouseInfo.normal, 0.15f);
 
@@ -113,7 +186,7 @@ public class PlotCreatorTool : EditorTool {
                 }
 
                 isDragging = true;
-                startPoint = currentPoint = info.point.ClosestGridPoint(plotCreator.UseSubgrid);
+                startPoint = currentPoint = info.point.ClosestGridPoint(true);
                 GUIUtility.hotControl = GUIUtility.GetControlID(FocusType.Passive);
                 Event.current.Use();
                 /*if (Tools.current != Tool.None) {
@@ -127,7 +200,7 @@ public class PlotCreatorTool : EditorTool {
             var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             var point = Vector3.zero;
             if (Physics.Raycast(ray, out var info)) {
-                currentPoint = info.point.ClosestGridPoint(plotCreator.UseSubgrid);
+                currentPoint = info.point.ClosestGridPoint(true);
                 var size = currentPoint - startPoint;
                 var alignedSize = size.ClosestGridPoint(false);
                 currentPoint = startPoint + alignedSize;
@@ -187,7 +260,7 @@ public class PlotCreatorTool : EditorTool {
                             }
                         } else {
                             Undo.RecordObject(plotCreator, "Created plot");
-                            plotCreator.Plots.Add(Plot.FromStartEnd(start, end));
+                            plotCreator.SelectedPlotGrid.Plots.Add(Plot.FromStartEnd(start, end));
                         }
                     } else {
                         var selectedPlot = FindIntersectingPlot(new Vector2(point.x, point.z));
@@ -219,10 +292,8 @@ public class PlotCreatorTool : EditorTool {
     }
 
     private int FindIntersectingPlot(Vector2 position) {
-        for (var i = 0; i < plotCreator.Plots.Count; i++) {
-            var plotBounds = plotCreator.Plots[i].Bounds;
-            plotBounds.size += Vector2.one * 0.005f;
-            if (plotBounds.Contains(position, true))
+        for (var i = 0; i < plotCreator.SelectedPlotGrid.Plots.Count; i++) {
+            if (MathUtils.PointInRotatedRectangle(position, plotCreator.SelectedPlotGrid.Plots[i]))
                 return i;
         }
 
@@ -231,8 +302,9 @@ public class PlotCreatorTool : EditorTool {
 
     private List<int> FindIntersectingPlots(Rect rect) {
         var plots = new List<int>();
-        for (var i = 0; i < plotCreator.Plots.Count; i++) {
-            if (plotCreator.Plots[i].Bounds.Overlaps(rect, true) || rect.Overlaps(plotCreator.Plots[i].Bounds, true))
+        for (var i = 0; i < plotCreator.SelectedPlotGrid.Plots.Count; i++) {
+            var current = plotCreator.SelectedPlotGrid.Plots[i];
+            if (MathUtils.RectangleContains(rect, current))
                 plots.Add(i);
         }
 

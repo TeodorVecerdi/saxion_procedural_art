@@ -17,7 +17,7 @@ ScriptedImporter:
     generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://WoodPainted_01_v3\" label=\"\" >\n  <presetinput
-      identifier=\"$outputsize\" uid=\"447088102\" type=\"8\" value=\"10,10\" />\n 
+      identifier=\"$outputsize\" uid=\"447088102\" type=\"8\" value=\"9,9\" />\n 
       <presetinput identifier=\"$randomseed\" uid=\"1305744308\" type=\"4\" value=\"6702\"
       />\n  <presetinput identifier=\"Bare_Wood_Color2\" uid=\"1772994919\" type=\"3\"
       value=\"0.552941,0.521007,0.423529,1\" />\n  <presetinput identifier=\"Bare_Wood_Color1\"
@@ -558,8 +558,8 @@ ScriptedImporter:
     - label: Default
       bOverride: 0
       bLockRatio: 1
-      textureWidth: 1024
-      textureHeight: 1024
+      textureWidth: 512
+      textureHeight: 512
       textureFormatMode: 0
       normalCompressed: 0
       bGenerateOnLoad: 0

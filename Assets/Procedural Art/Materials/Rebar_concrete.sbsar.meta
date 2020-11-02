@@ -17,7 +17,7 @@ ScriptedImporter:
     generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://Rebar_concrete\" label=\"\" >\n  <presetinput
-      identifier=\"$outputsize\" uid=\"2593298880\" type=\"8\" value=\"12,12\" />\n 
+      identifier=\"$outputsize\" uid=\"2593298880\" type=\"8\" value=\"9,9\" />\n 
       <presetinput identifier=\"$randomseed\" uid=\"3454046098\" type=\"4\" value=\"4543\"
       />\n  <presetinput identifier=\"Hole_Depth\" uid=\"3993668400\" type=\"0\"
       value=\"0.658\" />\n  <presetinput identifier=\"Destruction_Amount\" uid=\"3994302057\"
@@ -535,8 +535,8 @@ ScriptedImporter:
     - label: Default
       bOverride: 0
       bLockRatio: 1
-      textureWidth: 4096
-      textureHeight: 4096
+      textureWidth: 512
+      textureHeight: 512
       textureFormatMode: 0
       normalCompressed: 1
       bGenerateOnLoad: 1

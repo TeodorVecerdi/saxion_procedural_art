@@ -26,6 +26,35 @@ public class BuildingGenerator : MonoBehaviour {
         mesh.Clear();
     }
 
+    public void GenerateFromPlot(PlotData plot, int buildingType, Vector3 offset) {
+        if (mesh != null)
+            mesh.Clear();
+        Setup();
+        var size = new Vector2Int(Mathf.RoundToInt(plot.Bounds.size.x), Mathf.RoundToInt(plot.Bounds.size.y));
+        var boolArr = buildingType == 0 ? GenSquare(size) : GenL(size);
+        var overhang = buildingType == 0 ? GenSquareOverhang(boolArr) : GenLOverhang();
+        var roofs = buildingType == 0 ? GenSquareRoof() : GenLRoof();
+        var path = MarchingSquares.March(boolArr);
+        CleanupOutline(boolArr);
+        var walls = GenWalls(path);
+
+        var combinedMesh = MeshUtils.Combine(roofs, walls, overhang);
+        var finalMesh = MeshUtils.Translate(combinedMesh, -0.5f*plot.Bounds.size.ToVec3() + new Vector3(0.5f, 0, 0.5f) + offset);
+        mesh = new Mesh {name = "Building"};
+
+        if (meshFilter.sharedMesh != null)
+            DestroyImmediate(meshFilter.sharedMesh);
+        meshFilter.sharedMesh = mesh;
+        mesh.SetVertices(finalMesh.Vertices);
+        mesh.SetUVs(0, finalMesh.UVs);
+        mesh.subMeshCount = GetComponent<MeshRenderer>().sharedMaterials.Length;
+        foreach (var submesh in finalMesh.Triangles.Keys) {
+            mesh.SetTriangles(finalMesh.Triangles[submesh], submesh);
+        }
+
+        mesh.RecalculateNormals();
+    }
+
     public void Generate() {
         if (GeneratorSettings == null) {
             throw new Exception("Generator Settings cannot be null! Make sure to assign a RandomSettings object to the class before calling BuildingGenerator::Generate");
@@ -75,6 +104,15 @@ public class BuildingGenerator : MonoBehaviour {
         buildingTypeSelector.CalculateAdditiveWeights();
     }
 
+    private Arr2d<bool> GenSquare(Vector2Int size) {
+        buildingHeight = RandUtils.RangeInclusive(GeneratorSettings.SquareBuildingSettings.MinSize.y, GeneratorSettings.SquareBuildingSettings.MaxSize.y);
+        dimensionsA = new Vector2Int(size.x, size.y);
+        dimensionsB = Vector2Int.zero;
+
+        var boolArr = new Arr2d<bool>(size.x, size.y, true);
+        return boolArr;
+    }
+
     private Arr2d<bool> GenSquare() {
         var size = RandUtils.RandomBetween(GeneratorSettings.SquareBuildingSettings.MinSize, GeneratorSettings.SquareBuildingSettings.MaxSize);
         buildingHeight = size.y;
@@ -82,6 +120,38 @@ public class BuildingGenerator : MonoBehaviour {
         dimensionsB = Vector2Int.zero;
 
         var boolArr = new Arr2d<bool>(size.x, size.z, true);
+        return boolArr;
+    }
+    
+    private Arr2d<bool> GenL(Vector2Int size) {
+        var widthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthA);
+        var lengthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthA);
+        var widthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthB);
+
+        // widthB = MathUtils.Clamp(widthB, 2, widthA - 1);
+        var lengthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthB);
+
+        // lengthB = MathUtils.Clamp(lengthB, 1, Mathf.CeilToInt(lengthA / 2f));
+        buildingHeight = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxHeight);
+        
+        // normalize size so it's in range of <size>
+        var proportionWA = widthA / (float)(widthA + widthB);
+        var proportionWB = widthB / (float)(widthA + widthB);
+        var proportionLA = lengthA / (float)(lengthA + lengthB);
+        var proportionLB = lengthB / (float)(lengthA + lengthB);
+        var actualWidthA = Mathf.CeilToInt(proportionWA * size.x);
+        var actualWidthB = Mathf.FloorToInt(proportionWB * size.x);
+        var actualLengthA = Mathf.CeilToInt(proportionLA * size.y);
+        var actualLengthB = Mathf.FloorToInt(proportionLB * size.y);
+        actualWidthA += (size.x - actualWidthA - actualWidthB);
+        actualLengthA += (size.y - actualLengthA - actualLengthB);
+        
+        
+        dimensionsA = new Vector2Int(actualWidthA + actualWidthB, actualLengthA + actualLengthB);
+        dimensionsB = new Vector2Int(actualWidthB, actualLengthB);
+        var boolArr = new Arr2d<bool>(dimensionsA, true);
+        CarveLShape(boolArr);
+
         return boolArr;
     }
 

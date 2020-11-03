@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf14e1d5fcc544a386b0f0e224290233, type: 3}
+  m_Name: RichHouseMaterials
+  m_EditorClassIdentifier: 
+  WallMaterial: {fileID: -5162719422318646024, guid: c70ef273e3422bf468dd00e071397a43, type: 3}
+  RoofMaterial: {fileID: -3931555169850261328, guid: d9fcaa9d0d7c36e4eb41f1167d48af55, type: 3}
+  WindowMaterial: {fileID: 6361247793036277023, guid: 205d9bbed87ffb040aa8688ebd1967d2, type: 3}
+  FeatureMaterial1: {fileID: -5162719422318646024, guid: c70ef273e3422bf468dd00e071397a43, type: 3}
+  FeatureMaterial2: {fileID: 0}
+  FeatureMaterial3: {fileID: 0}

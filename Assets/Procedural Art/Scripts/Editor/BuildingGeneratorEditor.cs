@@ -20,7 +20,8 @@ public class BuildingGeneratorEditor : Editor {
     }
 
     public override void OnInspectorGUI() {
-        if (bigLabelStyle == null) recalculateStyles = true;
+        base.OnInspectorGUI();
+        /*if (bigLabelStyle == null) recalculateStyles = true;
         if (recalculateStyles) {
             bigLabelStyle = new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleLeft, fontSize = 18, richText = true};
             mediumLabelStyle = new GUIStyle(bigLabelStyle) {fontSize = 15};
@@ -30,17 +31,16 @@ public class BuildingGeneratorEditor : Editor {
         var generator = target as BuildingGenerator;
         serializedObject.Update();
         GUILayout.BeginHorizontal();
-        
-        
+
         if (generator.GeneratorSettings == null) GUI.enabled = false;
         if (GUILayout.Button("Generate", GUILayout.Height(24)))
-            generator.Generate();
+            generator.GenerateRandom();
         if (GUILayout.Button("Clear", GUILayout.Height(24)))
             generator.Clear();
         GUI.enabled = true;
 
-        GUILayout.EndHorizontal();
-        GUILayout.Space(16);
+        GUILayout.EndHorizontal();*/
+        /*GUILayout.Space(16);
         generator.GeneratorSettings = EditorGUILayout.ObjectField("Random Settings", generator.GeneratorSettings, typeof(RandomSettings), false) as RandomSettings;
         GUILayout.Space(12);
 
@@ -118,9 +118,7 @@ public class BuildingGeneratorEditor : Editor {
 
             if (EditorGUI.EndChangeCheck()) {
                 Undo.RegisterCompleteObjectUndo(generator.GeneratorSettings, "Changed random settings");
-            }
-        }
-
-        serializedObject.ApplyModifiedProperties();
+            }*/
+        // serializedObject.ApplyModifiedProperties();
     }
 }

@@ -49,4 +49,10 @@ public class MeshData {
             triangles[i] += offset;
         }
     }
+
+    public void Rotate(Quaternion rotation) {
+        for (var i = 0; i < Vertices.Count; i++) {
+            Vertices[i] = rotation * Vertices[i];
+        }
+    }
 }

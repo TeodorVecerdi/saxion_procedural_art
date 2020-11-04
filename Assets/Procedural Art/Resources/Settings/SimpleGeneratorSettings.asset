@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7391b0573c54f1099c953e64a6a88d1, type: 3}
+  m_Name: SimpleGeneratorSettings
+  m_EditorClassIdentifier: 
+  GeneralSettings:
+    SquareChance: 1
+    LChance: 0
+  SquareBuildingSettings:
+    MinSize: {x: 5, y: 5, z: 3}
+    MaxSize: {x: 6, y: 9, z: 6}
+    OverhangChance: 0
+  LBuildingSettings:
+    MinMaxHeight: {x: 5, y: 9}
+    MinMaxWidthA: {x: 2, y: 3}
+    MinMaxLengthA: {x: 2, y: 3}
+    MinMaxWidthB: {x: 2, y: 3}
+    MinMaxLengthB: {x: 1, y: 3}
+    OverhangChance: 0.3

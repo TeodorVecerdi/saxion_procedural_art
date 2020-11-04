@@ -16,14 +16,18 @@ ScriptedImporter:
     graphDescIndex: 0
     generateAllOutputs: 0
     generateMipMaps: 1
-    preset: " <sbspreset pkgurl=\"pkg://Roof_Novibad_Base\" label=\"\" >\n </sbspreset>\n"
+    preset: " <sbspreset pkgurl=\"pkg://Roof_Novibad_Base\" label=\"\" >\n  <presetinput
+      identifier=\"$randomseed\" uid=\"295760496\" type=\"4\" value=\"9855\" />\n 
+      <presetinput identifier=\"normalStrength\" uid=\"790314364\" type=\"0\" value=\"2.33\"
+      />\n  <presetinput identifier=\"grungeBalance\" uid=\"790281867\" type=\"0\"
+      value=\"0.377\" />\n </sbspreset>\n"
     shaderName: HDRP/LitTessellation
     materialProperties:
       shader: {fileID: 4800000, guid: 756bac9090102564582875f4c7e30202, type: 3}
       shaderKeywords: _DISPLACEMENT_LOCK_TILING_SCALE _HEIGHTMAP _MASKMAP _NORMALMAP
         _NORMALMAP_TANGENT_SPACE _TESSELLATION_DISPLACEMENT _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
       lightmapFlags: 4
-      enableInstancingVariants: 0
+      enableInstancingVariants: 1
       doubleSidedGI: 0
       customRenderQueue: -1
       texEnvs:
@@ -368,11 +372,11 @@ ScriptedImporter:
         float: 1
       colors:
       - name: _BaseColor
-        color: {r: 1, g: 1, b: 1, a: 1}
+        color: {r: 1, g: 0.8001793, b: 0.3066038, a: 1}
       - name: _BaseColorMap_MipInfo
         color: {r: 0, g: 0, b: 0, a: 0}
       - name: _Color
-        color: {r: 1, g: 1, b: 1, a: 1}
+        color: {r: 1, g: 0.8001793, b: 0.30660376, a: 1}
       - name: _DiffusionProfileAsset
         color: {r: 0, g: 0, b: 0, a: 0}
       - name: _DoubleSidedConstants

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e559f7bde24b2288e033cce4c00200, type: 3}
+  m_Name: Poor_S
+  m_EditorClassIdentifier: 
+  MaterialSetting: {fileID: 11400000, guid: ea7db1ff63594084497e28d12e36de0e, type: 2}
+  GeneratorSettings: {fileID: 11400000, guid: d099fecbc5601404ebdbfd0b6707b39d, type: 2}
+  GeneratorPrefab: {fileID: 5837694755018867428, guid: ed8adb9fc7dc94148b65c2aba3606377, type: 3}

@@ -32,7 +32,7 @@ ScriptedImporter:
       shaderKeywords: _DISPLACEMENT_LOCK_TILING_SCALE _HEIGHTMAP _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
         _NORMALMAP _NORMALMAP_TANGENT_SPACE _TESSELLATION_DISPLACEMENT _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
       lightmapFlags: 4
-      enableInstancingVariants: 0
+      enableInstancingVariants: 1
       doubleSidedGI: 0
       customRenderQueue: 2000
       texEnvs:

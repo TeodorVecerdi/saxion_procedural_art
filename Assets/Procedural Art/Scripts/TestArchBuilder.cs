@@ -21,25 +21,6 @@ public class TestArchBuilder : MonoBehaviour {
         meshFilter.sharedMesh = mesh;
     }
 
-    private void OnDrawGizmos() {
-        return;
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.color = Color.blue;
-
-        var step = 180f / (Points - 1) * Mathf.Deg2Rad;
-        for (var val = 0f; val <= Mathf.PI + (step / 4f); val += step) {
-            var x = ((Mathf.Cos(val) + 1) / 2f) * Width;
-            var y = Mathf.Sin(val) * Height;
-            Gizmos.DrawSphere(new Vector3(x, y, 0f), 0.1f);
-        }
-
-        Gizmos.color = Color.green;
-        for (var val = 0f; val <= Mathf.PI + (step / 4f); val += step) {
-            var x = ((Mathf.Cos(val) + 1) / 2f) * Width;
-            var y = Mathf.Sin(val) * Height;
-            Gizmos.DrawSphere(new Vector3(x, y, Length), 0.1f);
-        }
-    }
 
     public void Generate() {
         if (meshFilter == null || meshFilter.sharedMesh != mesh) {

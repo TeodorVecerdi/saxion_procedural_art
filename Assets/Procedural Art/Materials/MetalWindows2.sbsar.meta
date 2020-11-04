@@ -30,7 +30,7 @@ ScriptedImporter:
         _NORMALMAP _NORMALMAP_TANGENT_SPACE _OCCLUSIONMAP _ROUGHNESSMAP _TESSELLATION_DISPLACEMENT
         _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
       lightmapFlags: 4
-      enableInstancingVariants: 0
+      enableInstancingVariants: 1
       doubleSidedGI: 0
       customRenderQueue: 2000
       texEnvs:

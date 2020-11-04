@@ -167,8 +167,8 @@ MonoBehaviour:
     showAlpha: 0
     showEyeDropper: 1
   tint:
-    m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 0.25618547, g: 0.6429986, b: 0.9528302, a: 1}
     hdr: 1
     showAlpha: 0
     showEyeDropper: 1
@@ -206,11 +206,11 @@ MonoBehaviour:
     m_Value: 201.2
     min: 1
   enableVolumetricFog:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   anisotropy:
     m_OverrideState: 1
-    m_Value: 0.6
+    m_Value: 0.68
     min: -1
     max: 1
   globalLightProbeDimmer:

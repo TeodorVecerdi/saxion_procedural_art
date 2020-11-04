@@ -42,7 +42,7 @@ ScriptedImporter:
       shaderKeywords: _EMISSIVECOLORMAP _EMISSIVE_COLOR_MAP _HEIGHTMAP _MASKMAP _NORMALMAP
         _NORMALMAP_TANGENT_SPACE _SPECULARCOLORMAP
       lightmapFlags: 4
-      enableInstancingVariants: 0
+      enableInstancingVariants: 1
       doubleSidedGI: 0
       customRenderQueue: 2000
       texEnvs:

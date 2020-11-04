@@ -81,9 +81,7 @@ public class PlotCreatorTool : EditorTool {
                         var bounds = plotCreator.SelectedPlotGrid.Plots[selected].Bounds;
                         selectionCenter += new Vector3(bounds.center.x, 0, bounds.center.y);
 
-                        var labelStyle = EditorStyles.largeLabel;
-                        labelStyle.fontSize = 24;
-                        labelStyle.fontStyle = FontStyle.Bold;
+                        var labelStyle = new GUIStyle(EditorStyles.largeLabel) {fontSize = 24, fontStyle = FontStyle.Bold};
                         Handles.Label(new Vector3(bounds.x, 0, bounds.y), $"{bounds.width} x {bounds.height}", labelStyle);
                     }
 
@@ -108,9 +106,7 @@ public class PlotCreatorTool : EditorTool {
                     break;
                 }
                 case Tool.Rotate: {
-                    var labelStyle = EditorStyles.largeLabel;
-                    labelStyle.fontSize = 24;
-                    labelStyle.fontStyle = FontStyle.Bold;
+                    var labelStyle = new GUIStyle(EditorStyles.largeLabel) {fontSize = 24, fontStyle = FontStyle.Bold};
                     foreach (var selected in selectedPlots) {
                         var currentPlot = plotCreator.SelectedPlotGrid.Plots[selected];
                         Handles.Label(new Vector3(currentPlot.Bounds.x, 0, currentPlot.Bounds.y), $"{currentPlot.Rotation}°", labelStyle);
@@ -207,9 +203,7 @@ public class PlotCreatorTool : EditorTool {
                 point = info.point;
             }
 
-            var labelStyle = EditorStyles.largeLabel;
-            labelStyle.fontSize = 24;
-            labelStyle.fontStyle = FontStyle.Bold;
+            var labelStyle = new GUIStyle(EditorStyles.largeLabel) {fontSize = 24, fontStyle = FontStyle.Bold};
             var currentSize = (currentPoint - startPoint).Abs();
             Handles.Label((currentPoint - Vector3.right * currentSize.x), $"{currentSize.x} x {currentSize.z}", labelStyle);
 

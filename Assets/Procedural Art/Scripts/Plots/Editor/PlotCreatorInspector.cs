@@ -15,7 +15,7 @@ public class PlotCreatorInspector : Editor {
     }
 
     private void OnSceneGUI() {
-        if (EditorTools.activeToolType != typeof(PlotCreatorTool) && !alreadySetTool) {
+        if (EditorTools.activeToolType != typeof(PlotCreatorTool) && !alreadySetTool && (target as PlotCreator).IsEnabled) {
             EditorTools.SetActiveTool<PlotCreatorTool>();
             alreadySetTool = true;
         }

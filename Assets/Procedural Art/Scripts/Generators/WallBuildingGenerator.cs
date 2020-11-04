@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class WallBuildingGenerator : BuildingGenerator {
     private WallSettings wallSettings;
-    private static bool doneOnceField;
+    public static new bool DoneOnceField;
     private static float roofHeight;
+    private static float wallHeight;
 
-    public override MeshData Generate(PlotData plot, BuildingTypeSettings settings, int buildingType, Vector3 offset) {
+    public override MeshData Generate(PlotData plot, BuildingTypeSettings settings, float heightAdjustment, Vector3 offset, int LOD) {
         wallSettings = settings.GeneratorSettings as WallSettings;
-        DoOnce(ref doneOnceField);
+        DoOnce(ref DoneOnceField);
 
         var size = new Vector2Int(Mathf.RoundToInt(plot.Bounds.size.x), Mathf.RoundToInt(plot.Bounds.size.y));
         dimensionsA = new Vector2Int(size.x, size.y);
         dimensionsB = Vector2Int.zero;
-        buildingHeight = wallSettings.Height;
         var boolArr = new Arr2d<bool>(dimensionsA.x, dimensionsA.y, true);
         var roof = GenRoof();
         var path = MarchingSquares.March(boolArr);
@@ -29,21 +28,15 @@ public class WallBuildingGenerator : BuildingGenerator {
     public override void DoOnce(ref bool doneOnceField) {
         if (doneOnceField) return;
         doneOnceField = true;
-        roofHeight = RandUtils.Range(wallSettings.RoofHeightVariation.x, wallSettings.RoofHeightVariation.y);
+        roofHeight = Rand.Range(wallSettings.RoofHeightVariation.x, wallSettings.RoofHeightVariation.y);
+        wallHeight = wallSettings.Height + Rand.Range(wallSettings.HeightVariation.x, wallSettings.HeightVariation.y);
     }
 
     public override void Setup(BuildingTypeSettings settings) {
-        var wallSettings = settings.GeneratorSettings as WallSettings;
-        var seed = wallSettings.Seed;
-        if (wallSettings.AutoSeed) {
-            seed = DateTime.Now.Ticks;
-            wallSettings.Seed = seed;
-        }
-
-        Random.InitState((int) seed);
+        
     }
 
-    private new MeshData GenWalls(List<Vector2Int> path) {
+    private MeshData GenWalls(List<Vector2Int> path) {
         var walls = new MeshData();
         var current = Vector2Int.zero;
         foreach (var point in path) {
@@ -55,7 +48,7 @@ public class WallBuildingGenerator : BuildingGenerator {
             var wallWidth = diff.magnitude;
             var wall = MeshGenerator.GetMesh<PlaneGenerator>(to, Quaternion.Euler(0, angle - 180, 0), new Dictionary<string, dynamic> {
                 {"sizeA", wallWidth},
-                {"sizeB", buildingHeight},
+                {"sizeB", wallHeight},
                 {"orientation", PlaneGenerator.PlaneOrientation.XY},
                 {"submeshIndex", 0}
             });
@@ -68,7 +61,7 @@ public class WallBuildingGenerator : BuildingGenerator {
     }
 
     private MeshData GenRoof() {
-        var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+        var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, wallHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
             {"width", dimensionsA.x},
             {"height", roofHeight},
             {"thickness", wallSettings.RoofThickness},
@@ -77,7 +70,7 @@ public class WallBuildingGenerator : BuildingGenerator {
             {"addCap", true},
             {"closeRoof", true}
         });
-        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, wallHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
             {"width", dimensionsA.x},
             {"height", roofHeight},
             {"thickness", wallSettings.RoofThickness},

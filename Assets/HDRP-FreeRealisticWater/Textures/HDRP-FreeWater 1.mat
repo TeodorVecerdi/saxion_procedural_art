@@ -289,25 +289,25 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_10BE3CD8: 0.01
-    - Vector1_2DCE38F4: 0.05
+    - Vector1_2DCE38F4: -0.07
     - Vector1_3034A0E7: 0.72
     - Vector1_35CC0B3F: 4.38
     - Vector1_3894EE55: -0.1
     - Vector1_4159F3F: 0.25
     - Vector1_4AC4A68B: 0.009
     - Vector1_4E6C1A96: 0.783
-    - Vector1_4FE3D16D: 4.4
+    - Vector1_4FE3D16D: 16.3
     - Vector1_717AF822: 0
     - Vector1_75458A12: 1.5
     - Vector1_895CAB23: 2.25
     - Vector1_8DAAF4DB: 0.01
     - Vector1_9BC3A5CD: 0
     - Vector1_A8100DE7: 0.2
-    - Vector1_D7555F9C: 0.88
+    - Vector1_D7555F9C: 0.74
     - Vector1_D958705D: 0.01
     - Vector1_DFD3567: 0.01
     - Vector1_E5C822F8: 1
-    - Vector1_EDB9DB3: 1
+    - Vector1_EDB9DB3: 0.81
     - _0_1: 0.02
     - _AORemapMax0: 1
     - _AORemapMax1: 1
@@ -353,7 +353,7 @@ Material:
     - _DiffusionProfile1: 0
     - _DiffusionProfile2: 0
     - _DiffusionProfile3: 0
-    - _DiffusionProfileHash: 0
+    - _DiffusionProfileHash: 2.5975258
     - _DisplacementLockObjectScale: 1
     - _DisplacementLockTilingScale: 1
     - _DisplacementMode: 0
@@ -588,7 +588,7 @@ Material:
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _Color0: {r: 0.1532764, g: 0.6105888, b: 0.9926471, a: 0}
     - _DeepColor: {r: 0.07058769, g: 0.17646986, b: 0.32941103, a: 1}
-    - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
+    - _DiffusionProfileAsset: {r: -5.93822e+15, g: 1.2426782e+32, b: 1.5032816e+30, a: 0.27783445}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_DiffusionProfileReferences:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 3dc6a8d95f0fc474ebca977151408e3e, type: 2}
   m_MaterialReferences: []
 --- !u!114 &1704817363670343259
 MonoBehaviour:

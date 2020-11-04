@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b1fdf99367b45f9873d6a6312fcf368, type: 3}
+  m_Name: SVersions
+  m_EditorClassIdentifier: 
+  Versions:
+  - {fileID: 11400000, guid: e555761baea0246428ec2d50e7bb8a7b, type: 2}
+  - {fileID: 11400000, guid: e3f35b21cd4ee4a42b283a3712ae7353, type: 2}
+  - {fileID: 11400000, guid: 8d83e2a00b48afe4da95227a97327f0d, type: 2}
+  - {fileID: 11400000, guid: e07e658adcb689147911fcf00b099f9c, type: 2}
+  PlotLayerName: Square

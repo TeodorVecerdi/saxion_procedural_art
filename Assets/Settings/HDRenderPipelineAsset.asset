@@ -213,7 +213,7 @@ MonoBehaviour:
     supportDecals: 0
     msaaSampleCount: 8
     supportMotionVectors: 0
-    supportRuntimeDebugDisplay: 1
+    supportRuntimeDebugDisplay: 0
     supportDitheringCrossFade: 1
     supportTerrainHole: 0
     supportRayTracing: 0
@@ -243,7 +243,7 @@ MonoBehaviour:
     hdShadowInitParams:
       maxShadowRequests: 2048
       directionalShadowsDepthBits: 32
-      shadowFilteringQuality: 2
+      shadowFilteringQuality: 1
       punctualLightShadowAtlas:
         shadowAtlasResolution: 4096
         shadowAtlasDepthBits: 16
@@ -345,6 +345,7 @@ MonoBehaviour:
   diffusionProfileSettingsList:
   - {fileID: 11400000, guid: 26bdddf49760c61438938733f07fa2a2, type: 2}
   - {fileID: 11400000, guid: 78322c7f82657514ebe48203160e3f39, type: 2}
+  - {fileID: 11400000, guid: 3dc6a8d95f0fc474ebca977151408e3e, type: 2}
   beforeTransparentCustomPostProcesses: []
   beforePostProcessCustomPostProcesses: []
   afterPostProcessCustomPostProcesses: []

@@ -1,12 +1,19 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 using V2i = UnityEngine.Vector2Int;
 using V3i = UnityEngine.Vector3Int;
 using V3 = UnityEngine.Vector3;
 using V2 = UnityEngine.Vector2;
 
 public static class MathUtils {
+    public static float Map(this float value, float a1, float a2, float b1, float b2) => b1 + (value - a1) * (b2 - b1) / (a2 - a1);
+    public static V2 Map(this V2 value, float a1, float a2, float b1, float b2) => new V2(Map(value.x, a1, a2, b1, b2), Map(value.y, a1, a2, b1, b2));
     public static int Clamp(int value, int min, int max) => value < min ? min : value > max ? max : value;
+
+    public static V2i ToV2I(this V2 value, bool round = false, bool floor = false) =>
+        new V2i(round ? Mathf.RoundToInt(value.x) : floor ? Mathf.FloorToInt(value.x) : Mathf.CeilToInt(value.x),
+            round ? Mathf.RoundToInt(value.y) : floor ? Mathf.FloorToInt(value.y) : Mathf.CeilToInt(value.y));
 
     public static V2i Clamp(this V2i value, V2i min, V2i max) {
         return new V2i(Clamp(value.x, min.x, max.x), Clamp(value.y, min.y, max.y));
@@ -69,18 +76,18 @@ public static class MathUtils {
         var rightDown = new Vector3(plot.Bounds.min.x + plot.Bounds.width, 0, plot.Bounds.min.y);
         var rightUp = new Vector3(plot.Bounds.min.x + plot.Bounds.width, 0, plot.Bounds.min.y + plot.Bounds.height);
         var leftUp = new Vector3(plot.Bounds.min.x, 0, plot.Bounds.min.y + plot.Bounds.height);
-        leftDown = leftDown - plot.Bounds.min.ToVec3()  - plot.Bounds.size.ToVec3()/2f;
-        rightDown = rightDown - plot.Bounds.min.ToVec3()  - plot.Bounds.size.ToVec3()/2f;
-        rightUp = rightUp - plot.Bounds.min.ToVec3()  - plot.Bounds.size.ToVec3()/2f;
-        leftUp = leftUp - plot.Bounds.min.ToVec3()  - plot.Bounds.size.ToVec3()/2f;
+        leftDown = leftDown - plot.Bounds.min.ToVec3() - plot.Bounds.size.ToVec3() / 2f;
+        rightDown = rightDown - plot.Bounds.min.ToVec3() - plot.Bounds.size.ToVec3() / 2f;
+        rightUp = rightUp - plot.Bounds.min.ToVec3() - plot.Bounds.size.ToVec3() / 2f;
+        leftUp = leftUp - plot.Bounds.min.ToVec3() - plot.Bounds.size.ToVec3() / 2f;
         leftDown = rotation * leftDown;
         rightDown = rotation * rightDown;
         rightUp = rotation * rightUp;
         leftUp = rotation * leftUp;
-        leftDown = leftDown + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3()/2f;
-        rightDown = rightDown + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3()/2f;
-        rightUp = rightUp + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3()/2f;
-        leftUp = leftUp + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3()/2f;
+        leftDown = leftDown + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3() / 2f;
+        rightDown = rightDown + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3() / 2f;
+        rightUp = rightUp + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3() / 2f;
+        leftUp = leftUp + plot.Bounds.min.ToVec3() + plot.Bounds.size.ToVec3() / 2f;
         return (leftDown, rightDown, rightUp, leftUp);
     }
 
@@ -88,7 +95,7 @@ public static class MathUtils {
         var pointsB = RotatedRectangle(b);
         return a.Contains(pointsB.leftDown) || a.Contains(pointsB.leftUp) || a.Contains(pointsB.rightDown) || a.Contains(pointsB.rightUp);
     }
-    
+
     public static bool RectangleContains(Rect a, Plot b) {
         var pointsB = RotatedRectangle(b);
         return a.Contains(pointsB.leftDown.ToVec2()) && a.Contains(pointsB.leftUp.ToVec2()) && a.Contains(pointsB.rightDown.ToVec2()) && a.Contains(pointsB.rightUp.ToVec2());

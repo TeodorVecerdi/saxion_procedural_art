@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b1fdf99367b45f9873d6a6312fcf368, type: 3}
+  m_Name: Overhang_Versions
+  m_EditorClassIdentifier: 
+  Versions:
+  - {fileID: 11400000, guid: e5c53d44a0483c04a9c385e3c4c949c4, type: 2}
+  - {fileID: 11400000, guid: 8e006894f1f9fe64aacae68b7e520d39, type: 2}
+  - {fileID: 11400000, guid: 078e3f1d0f3b7ca45adb1b2301133edb, type: 2}
+  - {fileID: 11400000, guid: 0b242d81d8813184ea34b8567603d5b4, type: 2}
+  PlotLayerName: Overhang

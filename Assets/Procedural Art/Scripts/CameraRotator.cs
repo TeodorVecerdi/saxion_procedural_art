@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -17,6 +14,6 @@ public class CameraRotator : MonoBehaviour {
     }
 
     private void Update() {
-        transform.localEulerAngles += new Vector3(0, RotationSpeed, 0);
+        transform.localEulerAngles += new Vector3(0, RotationSpeed * Time.smoothDeltaTime, 0);
     }
 }

@@ -13,9 +13,9 @@ public class TowerBuildingGenerator : BuildingGenerator {
         DoOnce(ref DoneOnceField);
 
         var size = new Vector2Int(Mathf.RoundToInt(plot.Bounds.size.x), Mathf.RoundToInt(plot.Bounds.size.y));
-        dimensionsA = new Vector2Int(size.x, size.y);
-        dimensionsB = Vector2Int.zero;
-        var boolArr = new Arr2d<bool>(dimensionsA.x, dimensionsA.y, true);
+        DimensionsA = new Vector2Int(size.x, size.y);
+        DimensionsB = Vector2Int.zero;
+        var boolArr = new Arr2d<bool>(DimensionsA.x, DimensionsA.y, true);
         var roof = GenRoof();
         var path = MarchingSquares.March(boolArr);
         CleanupOutline(boolArr);
@@ -61,34 +61,34 @@ public class TowerBuildingGenerator : BuildingGenerator {
     }
 
     private MeshData GenRoof() {
-        var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, towerHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsA.y / 2f},
+        var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, towerHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsA.y / 2f},
             {"height", roofHeight},
-            {"length", dimensionsA.x / 2.0f},
+            {"length", DimensionsA.x / 2.0f},
             {"thickness", towerSettings.RoofThickness},
             {"addCap", true},
             {"joinCaps", true}
         });
-        var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, towerHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x / 2.0f},
+        var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, towerHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsA.x / 2.0f},
             {"height", roofHeight},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"thickness", towerSettings.RoofThickness},
             {"addCap", true},
             {"joinCaps", true}
         });
         var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, towerHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x / 2.0f},
+            {"width", DimensionsA.x / 2.0f},
             {"height", roofHeight},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"thickness", towerSettings.RoofThickness},
             {"addCap", true},
             {"joinCaps", true}
         });
-        var cornerB1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, towerHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsA.y / 2f},
+        var cornerB1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, towerHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsA.y / 2f},
             {"height", roofHeight},
-            {"length", dimensionsA.x / 2.0f},
+            {"length", DimensionsA.x / 2.0f},
             {"thickness", towerSettings.RoofThickness},
             {"addCap", true},
             {"joinCaps", true}

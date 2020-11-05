@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaterialSetting: {fileID: 11400000, guid: ea7db1ff63594084497e28d12e36de0e, type: 2}
   GeneratorSettings: {fileID: 11400000, guid: d099fecbc5601404ebdbfd0b6707b39d, type: 2}
-  GeneratorPrefab: {fileID: 5837694755018867428, guid: ed8adb9fc7dc94148b65c2aba3606377, type: 3}
+  GeneratorPrefab: {fileID: 2808164690853616713, guid: e34ccd82bd6896e4e96dd03ef581cb6b, type: 3}

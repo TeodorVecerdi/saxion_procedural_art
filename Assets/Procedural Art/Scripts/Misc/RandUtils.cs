@@ -6,6 +6,9 @@ public static class RandUtils {
         return Rand.Value < weight;
     }
 
+    public static float RandomBetween(Vector2 range) {
+        return Rand.Range(range.x, range.y);
+    }
     public static int RandomBetween(Vector2Int range) {
         return Rand.RangeInclusive(range.x, range.y);
     }

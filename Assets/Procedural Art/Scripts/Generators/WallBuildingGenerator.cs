@@ -13,9 +13,9 @@ public class WallBuildingGenerator : BuildingGenerator {
         DoOnce(ref DoneOnceField);
 
         var size = new Vector2Int(Mathf.RoundToInt(plot.Bounds.size.x), Mathf.RoundToInt(plot.Bounds.size.y));
-        dimensionsA = new Vector2Int(size.x, size.y);
-        dimensionsB = Vector2Int.zero;
-        var boolArr = new Arr2d<bool>(dimensionsA.x, dimensionsA.y, true);
+        DimensionsA = new Vector2Int(size.x, size.y);
+        DimensionsB = Vector2Int.zero;
+        var boolArr = new Arr2d<bool>(DimensionsA.x, DimensionsA.y, true);
         var roof = GenRoof();
         var path = MarchingSquares.March(boolArr);
         CleanupOutline(boolArr);
@@ -62,19 +62,19 @@ public class WallBuildingGenerator : BuildingGenerator {
 
     private MeshData GenRoof() {
         var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, wallHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x},
+            {"width", DimensionsA.x},
             {"height", roofHeight},
             {"thickness", wallSettings.RoofThickness},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"extrusion", wallSettings.RoofExtrusion},
             {"addCap", true},
             {"closeRoof", true}
         });
-        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, wallHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x},
+        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, wallHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsA.x},
             {"height", roofHeight},
             {"thickness", wallSettings.RoofThickness},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"extrusion", wallSettings.RoofExtrusion},
             {"addCap", true},
             {"closeRoof", true}

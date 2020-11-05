@@ -20,16 +20,16 @@ public class OverhangBuildingGenerator : BuildingGenerator {
             size.y = sx;
             rotation = 90;
         }
-        dimensionsA = new Vector2Int(size.x, size.y);
-        dimensionsB = Vector2Int.zero;
-        var boolArr = new Arr2d<bool>(dimensionsA.x, dimensionsA.y, true);
+        DimensionsA = new Vector2Int(size.x, size.y);
+        DimensionsB = Vector2Int.zero;
+        var boolArr = new Arr2d<bool>(DimensionsA.x, DimensionsA.y, true);
         var roof = GenRoof();
         var path = MarchingSquares.March(boolArr);
         CleanupOutline(boolArr);
         var walls = GenWalls(path);
         var features = GenFeatures(path);
         var mesh = MeshUtils.Combine(roof, walls, features);
-        mesh.Rotate(Quaternion.Euler(0, rotation, 0));
+        mesh.Rotate(Quaternion.Euler(0, rotation, 0), new Vector3(size.y / 2.0f, 0, size.x / 2.0f));
         return mesh;
     }
 
@@ -71,19 +71,19 @@ public class OverhangBuildingGenerator : BuildingGenerator {
 
     private MeshData GenRoof() {
         var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, overhangGroundOffset + overhangHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x},
+            {"width", DimensionsA.x},
             {"height", roofHeight},
             {"thickness", overhangSettings.RoofThickness},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"extrusion", overhangSettings.RoofExtrusion},
             {"addCap", true},
             {"closeRoof", true}
         });
-        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, overhangGroundOffset + overhangHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsA.x},
+        var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, overhangGroundOffset + overhangHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsA.x},
             {"height", roofHeight},
             {"thickness", overhangSettings.RoofThickness},
-            {"length", dimensionsA.y / 2f},
+            {"length", DimensionsA.y / 2f},
             {"extrusion", overhangSettings.RoofExtrusion},
             {"addCap", true},
             {"closeRoof", true}

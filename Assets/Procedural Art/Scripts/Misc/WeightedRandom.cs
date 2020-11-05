@@ -44,7 +44,7 @@ public class WeightedRandom {
     public int Value() {
         float[] array = weights;
         if (calculatedAdditiveWeights) array = additiveWeights;
-        var randomValue = Random.Range(0f, 1f);
+        var randomValue = Rand.Value;
         for (var i = 0; i < count-1; i++) {
             if (randomValue < array[i]) return i;
         }

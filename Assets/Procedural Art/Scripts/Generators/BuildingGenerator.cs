@@ -19,17 +19,15 @@ public class BuildingGenerator : MonoBehaviour {
     public GameObject LOD0;
     public GameObject LOD1;
     public GameObject LOD2;
-    [HideInInspector] public RandomSettings GeneratorSettings;
+    [HideInInspector] public SLSettings GeneratorSettings;
 
     public LODData LOD0Data;
     public LODData LOD1Data;
     public LODData LOD2Data;
 
-    private WeightedRandom buildingTypeSelector;
-
-    protected float buildingHeight;
-    protected Vector2Int dimensionsA;
-    protected Vector2Int dimensionsB;
+    protected float BuildingHeight;
+    protected Vector2Int DimensionsA;
+    protected Vector2Int DimensionsB;
 
     public virtual void DoOnce(ref bool doneOnceField) {
         if (doneOnceField) return;
@@ -37,7 +35,7 @@ public class BuildingGenerator : MonoBehaviour {
     }
 
     public void GenerateFromPlot(PlotData plot, BuildingTypeSettings settings, float heightAdjustment, Vector3 offset) {
-        GeneratorSettings = settings.GeneratorSettings as RandomSettings;
+        GeneratorSettings = settings.GeneratorSettings as SLSettings;
         SetupLOD();
         Setup(settings);
         SetupMaterials(settings);
@@ -68,12 +66,6 @@ public class BuildingGenerator : MonoBehaviour {
     }
 
     public virtual void Setup(BuildingTypeSettings settings) {
-        var generatorSettings = settings.GeneratorSettings as RandomSettings;
-
-        // Random Weight adjusting
-        buildingTypeSelector = new WeightedRandom(generatorSettings.GeneralSettings.SquareChance, generatorSettings.GeneralSettings.LChance);
-        buildingTypeSelector.NormalizeWeights();
-        buildingTypeSelector.CalculateAdditiveWeights();
     }
 
     private void SetupMaterials(BuildingTypeSettings settings) {
@@ -110,231 +102,153 @@ public class BuildingGenerator : MonoBehaviour {
     public virtual MeshData Generate(PlotData plot, BuildingTypeSettings settings, float heightAdjustment, Vector3 offset, int LOD) {
         DoOnce(ref DoneOnceField);
         var size = new Vector2Int(Mathf.RoundToInt(plot.Bounds.size.x), Mathf.RoundToInt(plot.Bounds.size.y));
-
+    
         var boolArr = GenSquare(size, heightAdjustment);
-        var overhang = GenSquareOverhang(boolArr, LOD);
         var roofs = GenSquareRoof();
         var path = MarchingSquares.March(boolArr);
         CleanupOutline(boolArr);
         var walls = GenWalls(path, LOD);
 
-        return MeshUtils.Combine(roofs, walls, overhang);
+        var mesh = MeshUtils.Combine(roofs, walls);
+        return mesh;
     }
 
-    private Arr2d<bool> GenSquare(Vector2Int size, float heightAdjustment) {
-        buildingHeight = heightAdjustment + Rand.RangeInclusive(GeneratorSettings.SquareBuildingSettings.MinSize.y, GeneratorSettings.SquareBuildingSettings.MaxSize.y);
-        dimensionsA = new Vector2Int(size.x, size.y);
-        dimensionsB = Vector2Int.zero;
-        var boolArr = new Arr2d<bool>(dimensionsA.x, dimensionsA.y, true);
+    protected Arr2d<bool> GenSquare(Vector2Int size, float heightAdjustment) {
+        BuildingHeight = heightAdjustment + RandUtils.RandomBetween(GeneratorSettings.SquareSettings.MinMaxHeight);
+        DimensionsA = new Vector2Int(size.x, size.y);
+        DimensionsB = Vector2Int.zero;
+        var boolArr = new Arr2d<bool>(DimensionsA.x, DimensionsA.y, true);
         return boolArr;
     }
 
-    private MeshData GenSquareRoof() {
-        var height = 1f;
-        var thickness = 0.15f;
-        var extrusion = 0.25f;
-        var straightChance = 0.333333f;
-        var doubleCornerChance = 0.5f;
+    protected MeshData GenSquareRoof() {
+        var height = RandUtils.RandomBetween(GeneratorSettings.SquareSettings.MinMaxRoofHeight);
+        var thickness = GeneratorSettings.GeneralSettings.RoofThickness;
+        var extrusion = GeneratorSettings.GeneralSettings.RoofExtrusion;
+        var roofTypeRandomizer = new WeightedRandom(GeneratorSettings.SquareSettings.StraightRoofChance, GeneratorSettings.SquareSettings.DoubleCornerRoofChance, GeneratorSettings.SquareSettings.CornerRoofChance);
+        roofTypeRandomizer.NormalizeWeights();
+        roofTypeRandomizer.CalculateAdditiveWeights();
+        var roofValue = roofTypeRandomizer.Value();
+        var straightRoof = roofValue == 0;
+        var doubleCornerRoof = roofValue == 1;
 
-        if (RandUtils.BoolWeighted(straightChance)) {
-            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                {"width", dimensionsA.x},
+        if (straightRoof) {
+            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x},
                 {"height", height},
                 {"thickness", thickness},
-                {"length", dimensionsA.y / 2f},
+                {"length", DimensionsA.y / 2f},
                 {"extrusion", extrusion},
                 {"addCap", true},
                 {"closeRoof", true}
             });
-            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                {"width", dimensionsA.x},
+            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x},
                 {"height", height},
                 {"thickness", thickness},
-                {"length", dimensionsA.y / 2f},
+                {"length", DimensionsA.y / 2f},
                 {"extrusion", extrusion},
                 {"addCap", true},
                 {"closeRoof", true}
             });
             return MeshUtils.Combine(roofA, roofA1);
+        }
+        var cornerWidth = DimensionsA.y * RandUtils.RandomBetween(GeneratorSettings.SquareSettings.RoofWidthToBuildingWidthRatio);
+        if (doubleCornerRoof) {
+            var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+                {"width", cornerWidth},
+                {"height", height},
+                {"length", DimensionsA.x / 2.0f},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x / 2.0f},
+                {"height", height},
+                {"length", cornerWidth},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x / 2.0f},
+                {"height", height},
+                {"length", cornerWidth},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var cornerB1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                {"width", cornerWidth},
+                {"height", height},
+                {"length", DimensionsA.x / 2.0f},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, cornerWidth -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.y - 2*cornerWidth},
+                {"height", height},
+                {"thickness", thickness},
+                {"length", DimensionsA.x / 2f},
+                {"extrusion", 0},
+                {"addCap", true},
+                {"closeRoof", true}
+            });
+            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(- 0.5f, BuildingHeight, DimensionsA.y - cornerWidth - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.y - 2 * cornerWidth},
+                {"height", height},
+                {"thickness", thickness},
+                {"length", DimensionsA.x / 2f},
+                {"extrusion", 0},
+                {"addCap", true},
+                {"closeRoof", true}
+            });
+            return MeshUtils.Combine(cornerA, cornerA1, cornerB, cornerB1, roofA, roofA1);
         } else {
-            if (RandUtils.BoolWeighted(doubleCornerChance)) {
-                var cornerWidth = Rand.Range(dimensionsA.x / 4f, dimensionsA.x / 2f);
-                var cornerWidthB = Rand.Range(dimensionsA.x / 4f, dimensionsA.x / 2f);
-                var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.y / 2f},
-                    {"height", height},
-                    {"length", cornerWidth},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                    {"width", cornerWidth},
-                    {"height", height},
-                    {"length", dimensionsA.y / 2f},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                    {"width", cornerWidthB},
-                    {"height", height},
-                    {"length", dimensionsA.y / 2f},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var cornerB1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.y / 2f},
-                    {"height", height},
-                    {"length", cornerWidthB},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(cornerWidthB - 0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.x - cornerWidth - cornerWidthB},
-                    {"height", height},
-                    {"thickness", thickness},
-                    {"length", dimensionsA.y / 2f},
-                    {"extrusion", 0},
-                    {"addCap", true},
-                    {"closeRoof", true}
-                });
-                var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - cornerWidth - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.x - cornerWidth - cornerWidthB},
-                    {"height", height},
-                    {"thickness", thickness},
-                    {"length", dimensionsA.y / 2f},
-                    {"extrusion", 0},
-                    {"addCap", true},
-                    {"closeRoof", true}
-                });
-                return MeshUtils.Combine(cornerA, cornerA1, cornerB, cornerB1, roofA, roofA1);
-            } else {
-                var cornerWidth = Rand.Range(dimensionsA.x / 4f, dimensionsA.x / 2f);
-                var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.y / 2f},
-                    {"height", height},
-                    {"length", cornerWidth},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                    {"width", cornerWidth},
-                    {"height", height},
-                    {"length", dimensionsA.y / 2f},
-                    {"thickness", thickness},
-                    {"addCap", true},
-                    {"joinCaps", true}
-                });
-                var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.x - cornerWidth},
-                    {"height", height},
-                    {"thickness", thickness},
-                    {"length", dimensionsA.y / 2f},
-                    {"extrusion", extrusion},
-                    {"addCap", true},
-                    {"extrusionRight", false},
-                    {"closeRoof", true}
-                });
-                var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsA.x - cornerWidth},
-                    {"height", height},
-                    {"thickness", thickness},
-                    {"length", dimensionsA.y / 2f},
-                    {"extrusion", extrusion},
-                    {"extrusionRight", false},
-                    {"addCap", true},
-                    {"flip", true},
-                    {"closeRoof", true}
-                });
-                return MeshUtils.Combine(cornerA, cornerB, roofA, roofA1);
-            }
+            var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.y / 2f},
+                {"height", height},
+                {"length", cornerWidth},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+                {"width", cornerWidth},
+                {"height", height},
+                {"length", DimensionsA.y / 2f},
+                {"thickness", thickness},
+                {"addCap", true},
+                {"joinCaps", true}
+            });
+            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x - cornerWidth},
+                {"height", height},
+                {"thickness", thickness},
+                {"length", DimensionsA.y / 2f},
+                {"extrusion", extrusion},
+                {"addCap", true},
+                {"extrusionRight", false},
+                {"closeRoof", true}
+            });
+            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+                {"width", DimensionsA.x - cornerWidth},
+                {"height", height},
+                {"thickness", thickness},
+                {"length", DimensionsA.y / 2f},
+                {"extrusion", extrusion},
+                {"extrusionRight", false},
+                {"addCap", true},
+                {"flip", true},
+                {"closeRoof", true}
+            });
+            return MeshUtils.Combine(cornerA, cornerB, roofA, roofA1);
         }
     }
 
-    private MeshData GenSquareOverhang(Arr2d<bool> layout, int LOD) {
-        if (!RandUtils.BoolWeighted(GeneratorSettings.SquareBuildingSettings.OverhangChance))
-            return new MeshData();
-
-        var horizontal = Rand.Bool;
-        var width = horizontal ? Rand.RangeInclusive(Mathf.CeilToInt(dimensionsA.x / 4f), Mathf.CeilToInt(dimensionsA.x / 3f)) : Rand.RangeInclusive(Mathf.CeilToInt(dimensionsA.y / 4f), Mathf.CeilToInt(dimensionsA.y / 3f));
-        if (horizontal) {
-            layout.Fill(new Vector2Int(layout.Length1 - width, 0), new Vector2Int(layout.Length1, layout.Length2), false);
-        } else {
-            layout.Fill(new Vector2Int(0, layout.Length2 - width), new Vector2Int(layout.Length1, layout.Length2), false);
-        }
-
-        var meshes = new List<MeshData>();
-        var thickness = 0.25f;
-        var start = Mathf.FloorToInt(Rand.Range(1, 3f * buildingHeight / 4f));
-        var height = buildingHeight - start;
-
-        var archChance = 0.5f;
-        var archLOD = LOD == 0 ? 45 : LOD == 1 ? 21 : 7;
-
-        if (horizontal) {
-            var wallA = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - width - 0.5f, start, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                {"sizeA", width},
-                {"sizeB", height},
-                {"orientation", PlaneGenerator.PlaneOrientation.XY}
-            });
-            var wallB = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - 0.5f, start, dimensionsA.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                {"sizeA", width},
-                {"sizeB", height},
-                {"orientation", PlaneGenerator.PlaneOrientation.XY}
-            });
-            var wallC = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - 0.5f, start, -0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
-                {"sizeA", dimensionsA.y},
-                {"sizeB", height},
-                {"orientation", PlaneGenerator.PlaneOrientation.XY}
-            });
-            meshes.Add(wallA);
-            meshes.Add(wallB);
-            meshes.Add(wallC);
-            if (RandUtils.BoolWeighted(archChance)) {
-                // ARCH X
-                if (RandUtils.BoolWeighted(archChance)) {
-                    var archWidth = width - 2f * thickness;
-                    var archOffset = thickness;
-                    var archHeight = archWidth / 2f;
-                    var arch = MeshGenerator.GetMesh<ArchGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f + archOffset, start - 1, dimensionsA.y - thickness - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                        {"width", archWidth},
-                        {"height", archHeight},
-                        {"length", thickness},
-                        {"points", archLOD}
-                    });
-                }
-            }
-        } else {
-            var wallA = MeshGenerator.GetMesh<WallGenerator>(new Vector3(-0.5f, start, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-                {"width", width},
-                {"height", height},
-                {"thickness", 0.01f},
-                {"thicknessOutwards", true}
-            });
-            var wallB = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, start, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-                {"width", width},
-                {"height", height},
-                {"thickness", 0.01f},
-                {"thicknessInwards", true},
-            });
-            var wallC = MeshGenerator.GetMesh<WallGenerator>(new Vector3(-0.5f, start, dimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                {"width", dimensionsA.x},
-                {"height", height},
-                {"thickness", 0.01f},
-                {"thicknessInwards", true}
-            });
-            meshes.Add(wallA);
-            meshes.Add(wallB);
-            meshes.Add(wallC);
-        }
-
-        return MeshUtils.Combine(meshes);
-    }
-
+   
     protected MeshData GenWalls(List<Vector2Int> path, int LOD) {
         var walls = new MeshData();
         var current = Vector2Int.zero;
@@ -347,27 +261,27 @@ public class BuildingGenerator : MonoBehaviour {
             var wallWidth = diff.magnitude;
             var wall = MeshGenerator.GetMesh<PlaneGenerator>(to, Quaternion.Euler(0, angle - 180, 0), new Dictionary<string, dynamic> {
                 {"sizeA", wallWidth},
-                {"sizeB", buildingHeight},
+                {"sizeB", BuildingHeight},
                 {"orientation", PlaneGenerator.PlaneOrientation.XY},
             });
 
             walls.MergeMeshData(wall);
-            walls.MergeMeshData(AddWallFeatures(from, to, buildingHeight, wallWidth, angle, LOD));
+            walls.MergeMeshData(AddWallFeatures(from, to, BuildingHeight, wallWidth, angle, LOD));
             current = next;
         }
 
         return walls;
     }
 
-    protected MeshData AddWallFeatures(Vector3 wallStart, Vector3 wallEnd, float buildingHeight, float wallWidth, float wallAngle, int LOD, bool addPillar = true) {
-        var thickness = 0.1f;
-        var fillWallSegmentChance = 0.1f;
-        var diagonalAChance = 0.5f;
-        var diagonalBChance = 0.5f;
-        var windowChance = 0.2f;
+    protected virtual MeshData AddWallFeatures(Vector3 wallStart, Vector3 wallEnd, float buildingHeight, float wallWidth, float wallAngle, int LOD, bool addPillar = true) {
+        var thickness = GeneratorSettings.GeneralSettings.FeatureThickness;
+        var diagonalAChance = GeneratorSettings.GeneralSettings.DiagonalAChance;
+        var diagonalBChance = GeneratorSettings.GeneralSettings.DiagonalBChance;
+        var windowChance = GeneratorSettings.GeneralSettings.WindowChance;
 
         var wallDirection = (wallEnd - wallStart).normalized;
         var wallPerpendicular = Vector3.Cross(wallDirection, Vector3.up);
+        var wallSize = Mathf.RoundToInt((wallEnd - wallStart).magnitude);
 
         var features = new MeshData();
 
@@ -382,127 +296,129 @@ public class BuildingGenerator : MonoBehaviour {
             features.MergeMeshData(pillar);
         }
 
-        
         var splitSectionsVertical = new List<float> {0, 1};
         var lastSplitPoint = splitSectionsVertical[1];
         while (lastSplitPoint < buildingHeight) {
-            var nextSize = Rand.RangeInclusive(1, 2);
+            var nextSize = RandUtils.RandomBetween(GeneratorSettings.GeneralSettings.VerticalSplitMinMax);
+            if (lastSplitPoint + nextSize < buildingHeight && lastSplitPoint + nextSize > buildingHeight - 1) nextSize = buildingHeight - lastSplitPoint - 1;
             lastSplitPoint += nextSize;
             if (lastSplitPoint >= buildingHeight) lastSplitPoint = buildingHeight;
             splitSectionsVertical.Add(lastSplitPoint);
         }
 
+        var splitSectionsHorizontal = new List<float> {0};
+        var lastSplitPointH = splitSectionsHorizontal[0];
+        while (lastSplitPointH < wallSize) {
+            var nextSize = RandUtils.RandomBetween(GeneratorSettings.GeneralSettings.HorizontalSplitMinMax);
+            if (lastSplitPointH + nextSize < wallSize && lastSplitPointH + nextSize > wallSize - 1) nextSize = wallSize - lastSplitPointH - 1;
+            lastSplitPointH += nextSize;
+            if (lastSplitPointH > wallSize) lastSplitPointH = wallSize;
+            splitSectionsHorizontal.Add(lastSplitPointH);
+        }
+
         for (var i = 1; i < splitSectionsVertical.Count; i++) {
-            var horizontalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + Vector3.up * splitSectionsVertical[i] - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                {"start", Vector3.zero + Vector3.right * thickness / 2f},
-                {"end", Vector3.right * (wallWidth - thickness / 2f)},
-                {"thickness", thickness},
-                {"extrusion", thickness},
-                {"submeshIndex", 2},
-                {"rotateUV", true}
-            });
-            if (LOD <= 1)
-                features.MergeMeshData(horizontalLine);
-            if (i == 1)
-                continue;
-            var wallSize = Mathf.RoundToInt((wallEnd - wallStart).magnitude);
             var sectionHeight = splitSectionsVertical[i] - splitSectionsVertical[i - 1];
-            if (wallSize > 2 && RandUtils.BoolWeighted(windowChance) && LOD <= 1) {
-                var windowPosition = wallSize / 2f;
-                var window = MeshGenerator.GetMesh<PlaneGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) + wallPerpendicular * thickness / 4f, Quaternion.Euler(0, wallAngle - 180, 0), new Dictionary<string, dynamic> {
-                    {"sizeA", 1},
-                    {"sizeB", 1},
-                    {"orientation", PlaneGenerator.PlaneOrientation.XY},
-                    {"submeshIndex", 3},
-                    {"extraUvSettings", MeshGenerator.UVSettings.NoOffset}
-                });
-                features.MergeMeshData(window);
-                features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f - 1) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f + 0.3f), Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.right},
-                    {"thickness", 0.035f},
-                    {"extrusion", 0.035f},
-                    {"submeshIndex", 2},
-                    {"rotateUV", true}
-                }));
-                features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f - 1) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f + 0.6f), Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.right},
-                    {"thickness", 0.035f},
-                    {"extrusion", 0.035f},
-                    {"submeshIndex", 2},
-                    {"rotateUV", true}
-                }));
-                features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f - 1 + 0.375f) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * 0.005f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.up * (1 - thickness / 2f)},
-                    {"thickness", 0.035f},
-                    {"extrusion", 0.035f},
-                    {"submeshIndex", 2},
-                    {"rotateUV", true}
-                }));
-                features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f - 1 + 0.725f) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * 0.005f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.up * (1 - thickness / 2f)},
-                    {"thickness", 0.035f},
-                    {"extrusion", 0.035f},
-                    {"submeshIndex", 2},
-                    {"rotateUV", true}
-                }));
-                if (sectionHeight > 1) {
-                    var line = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - thickness / 2f - 1) + Vector3.up * (splitSectionsVertical[i - 1] + 1) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                        {"start", Vector3.right * thickness},
-                        {"end", Vector3.right},
+            var addWindow = wallSize > 2 && RandUtils.BoolWeighted(windowChance) && LOD <= 1;
+            var windowWidth = 0.0f;
+            var windowHeight = 0.0f;
+
+            if (addWindow) {
+                windowHeight = Rand.Range(1f, Mathf.Max(1f, sectionHeight * 0.75f));
+            }
+
+            for (var i2 = 1; i2 < splitSectionsHorizontal.Count; i2++) {
+                var sectionWidth = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
+                var addWindowHorizontal = addWindow;
+                if (RandUtils.BoolWeighted(windowChance/2.0f)) addWindowHorizontal = false;
+                if (addWindowHorizontal) {
+                    windowWidth = Rand.Range(1f, Mathf.Max(1f, sectionWidth * 0.75f));
+                }
+
+                if (LOD <= 1 && i2 != splitSectionsHorizontal.Count - 1) {
+                    var verticalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2] + Vector3.up * (thickness / 2f), Quaternion.identity, new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", Vector3.up * buildingHeight},
                         {"thickness", thickness},
                         {"extrusion", thickness},
                         {"submeshIndex", 2},
-                        {"rotateUV", true}
+                        {"extrusionCenter", true}
                     });
-                    features.MergeMeshData(line);
+                    features.MergeMeshData(verticalLine);
                 }
 
-                var lineLeft = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f - 1) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.up * (sectionHeight - thickness)},
+                var horizontalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + Vector3.up * splitSectionsVertical[i] - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero + Vector3.right * thickness / 2f},
+                    {"end", Vector3.right * (wallWidth - thickness / 2f)},
                     {"thickness", thickness},
                     {"extrusion", thickness},
                     {"submeshIndex", 2},
                     {"rotateUV", true}
                 });
-                features.MergeMeshData(lineLeft);
-                var lineRight = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
-                    {"start", Vector3.zero},
-                    {"end", Vector3.up * (sectionHeight - thickness)},
-                    {"thickness", thickness},
-                    {"extrusion", thickness},
-                    {"submeshIndex", 2},
-                    {"rotateUV", true}
-                });
-                features.MergeMeshData(lineRight);
-            } else {
-                var splitSectionsHorizontal = new List<int> {0};
-                var lastSplitPointH = splitSectionsHorizontal[0];
-                while (lastSplitPointH < wallSize) {
-                    lastSplitPointH += Rand.RangeInclusive(1, 2);
-                    if (lastSplitPointH > wallSize) lastSplitPointH = wallSize;
-                    splitSectionsHorizontal.Add(lastSplitPointH);
-                }
+                if (LOD <= 1)
+                    features.MergeMeshData(horizontalLine);
+                if (i == 1)
+                    continue;
 
-                for (var i2 = 1; i2 < splitSectionsHorizontal.Count; i2++) {
-                    if (LOD <= 1 && i2 != splitSectionsHorizontal.Count - 1) {
-                        var verticalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2] + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f), Quaternion.identity, new Dictionary<string, dynamic> {
+                if (LOD <= 1 && addWindowHorizontal) {
+                    var windowPosition = splitSectionsHorizontal[i2] - 0.5f * (sectionWidth);
+                    var window = MeshGenerator.GetMesh<PlaneGenerator>(wallStart + wallDirection * (windowPosition + 0.5f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) + wallPerpendicular * thickness / 4f, Quaternion.Euler(0, wallAngle - 180, 0), new Dictionary<string, dynamic> {
+                        {"sizeA", windowWidth},
+                        {"sizeB", windowHeight},
+                        {"orientation", PlaneGenerator.PlaneOrientation.XY},
+                        {"submeshIndex", 3},
+                        {"extraUvSettings", MeshGenerator.UVSettings.NoOffset}
+                    });
+                    features.MergeMeshData(window);
+
+                    /* BEGIN Frame */
+                    features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition - 0.5f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + 0.33334f * windowHeight), Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", Vector3.right * windowWidth},
+                        {"thickness", 0.035f},
+                        {"extrusion", 0.035f},
+                        {"submeshIndex", 2},
+                        {"rotateUV", true}
+                    }));
+                    features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition - 0.5f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + windowHeight - 0.33334f * windowHeight), Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", Vector3.right * windowWidth},
+                        {"thickness", 0.035f},
+                        {"extrusion", 0.035f},
+                        {"submeshIndex", 2},
+                        {"rotateUV", true}
+                    }));
+                    features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f * windowWidth - 0.33334f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * 0.005f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", Vector3.up * (windowHeight - thickness / 2f)},
+                        {"thickness", 0.035f},
+                        {"extrusion", 0.035f},
+                        {"submeshIndex", 2},
+                        {"rotateUV", true}
+                    }));
+                    features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition - 0.5f * windowWidth + 0.33334f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * 0.005f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", Vector3.up * (windowHeight - thickness / 2f)},
+                        {"thickness", 0.035f},
+                        {"extrusion", 0.035f},
+                        {"submeshIndex", 2},
+                        {"rotateUV", true}
+                    }));
+                    /* END Frame */
+
+                    if (sectionHeight > 1) {
+                        var line = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition - 0.5f * windowWidth) + Vector3.up * (splitSectionsVertical[i - 1] + windowHeight) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
                             {"start", Vector3.zero},
-                            {"end", Vector3.up * (splitSectionsVertical[i] - splitSectionsVertical[i - 1] - thickness)},
+                            {"end", Vector3.right * windowWidth},
                             {"thickness", thickness},
                             {"extrusion", thickness},
                             {"submeshIndex", 2},
-                            {"extrusionCenter", true}
+                            {"rotateUV", true}
                         });
-                            features.MergeMeshData(verticalLine);
+                        features.MergeMeshData(line);
                     }
-
-                    if (RandUtils.BoolWeighted(fillWallSegmentChance) && LOD <= 0) {
-                        var fillWallSpacing = Rand.Range(0.01f, 0.02f);
+                    
+                    if (RandUtils.BoolWeighted(GeneratorSettings.GeneralSettings.FillWallSegmentChance) && LOD <= 0) {
+                        var fillWallSpacing = RandUtils.RandomBetween(GeneratorSettings.GeneralSettings.FillWallSegmentSpacing);
                         var fillWallThickness = thickness - fillWallSpacing;
                         var totalWidth = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1] - fillWallSpacing;
                         var totalSteps = (int) (totalWidth / thickness);
@@ -520,32 +436,53 @@ public class BuildingGenerator : MonoBehaviour {
                         }
                     }
 
-                    if (RandUtils.BoolWeighted(diagonalAChance) && LOD <= 0) {
-                        var diff = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
-                        var diagonalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2 - 1] + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 6f, Quaternion.identity, new Dictionary<string, dynamic> {
-                            {"start", Vector3.zero - Vector3.up * (i == 1 ? thickness / 2f : 0)},
-                            {"end", wallDirection * diff + Vector3.up * (splitSectionsVertical[i] - splitSectionsVertical[i - 1] - thickness + (i == 1 ? 1f * thickness : 0))},
+                    if (sectionWidth > 1) {
+                        var lineLeft = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition + 0.5f * windowWidth + 0.5f * thickness) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                            {"start", Vector3.zero},
+                            {"end", Vector3.up * windowHeight},
                             {"thickness", thickness},
                             {"extrusion", thickness},
                             {"submeshIndex", 2},
-                            {"extrusionCenter", true}
+                            {"rotateUV", true}
                         });
-                        features.MergeMeshData(diagonalLine);
-                    }
-
-                    if (RandUtils.BoolWeighted(diagonalBChance) && LOD <= 0) {
-                        var diff = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
-                        var diagonalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2 - 1] + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 6f, Quaternion.identity, new Dictionary<string, dynamic> {
-                            {"start", wallDirection * diff - Vector3.up * (i == 1 ? thickness / 2f : 0)},
-                            {"end", Vector3.up * (splitSectionsVertical[i] - splitSectionsVertical[i - 1] - thickness + (i == 1 ? 1f * thickness : 0))},
+                        features.MergeMeshData(lineLeft);
+                        var lineRight = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * (windowPosition - 0.5f * windowWidth - 0.5f * thickness) + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2f, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                            {"start", Vector3.zero},
+                            {"end", Vector3.up * windowHeight},
                             {"thickness", thickness},
                             {"extrusion", thickness},
                             {"submeshIndex", 2},
-                            {"extrusionCenter", true}
+                            {"rotateUV", true}
                         });
-
-                        features.MergeMeshData(diagonalLine);
+                        features.MergeMeshData(lineRight);
                     }
+                }
+
+                if (RandUtils.BoolWeighted(diagonalAChance) && LOD <= 0) {
+                    var diff = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
+                    var diagonalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2 - 1] + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2.5f, Quaternion.identity, new Dictionary<string, dynamic> {
+                        {"start", Vector3.zero},
+                        {"end", wallDirection * diff + Vector3.up * (splitSectionsVertical[i] - splitSectionsVertical[i - 1] - thickness)},
+                        {"thickness", thickness},
+                        {"extrusion", thickness},
+                        {"submeshIndex", 2},
+                        {"extrusionCenter", true}
+                    });
+                    features.MergeMeshData(diagonalLine);
+                }
+
+                if (RandUtils.BoolWeighted(diagonalBChance) && LOD <= 0) {
+                    var diff = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
+                    var diagonalLine = MeshGenerator.GetMesh<LineGenerator>(wallStart + wallDirection * splitSectionsHorizontal[i2 - 1] + Vector3.up * (splitSectionsVertical[i - 1] + thickness / 2f) - wallPerpendicular * thickness / 2.5f, Quaternion.identity, new Dictionary<string, dynamic> {
+                        {"start", wallDirection * diff},
+                        {"end", Vector3.up * (splitSectionsVertical[i] - splitSectionsVertical[i - 1] - thickness)},
+                        {"thickness", thickness},
+                        {"extrusion", thickness},
+                        {"submeshIndex", 2},
+                        {"extrusionCenter", true}
+                    });
+
+                    features.MergeMeshData(diagonalLine);
                 }
             }
         }
@@ -571,11 +508,5 @@ public class BuildingGenerator : MonoBehaviour {
         }
 
         queuedToRemove.ForEach(coord => boolArr[coord] = false);
-    }
-
-    private void CarveLShape(Arr2d<bool> arr) {
-        var from = new Vector2Int(dimensionsA.x - dimensionsB.x, dimensionsA.y - dimensionsB.y);
-        var to = new Vector2Int(dimensionsA.x, dimensionsA.y);
-        arr.Fill(from, to, false);
     }
 }

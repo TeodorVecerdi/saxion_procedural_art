@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class LBuildingGenerator : BuildingGenerator {
     public static new bool DoneOnceField = false;
 
@@ -27,16 +25,16 @@ public class LBuildingGenerator : BuildingGenerator {
         return MeshUtils.Combine(roofs, walls, overhang);
     }
 
-    private Arr2d<bool> GenL(Vector2Int size, float heightAdjustment) {
-        var widthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthA);
-        var lengthA = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthA);
-        var widthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxWidthB);
+    protected Arr2d<bool> GenL(Vector2Int size, float heightAdjustment) {
+        var widthA = RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxWidthA);
+        var lengthA = RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxLengthA);
+        var widthB = RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxWidthB);
 
         // widthB = MathUtils.Clamp(widthB, 2, widthA - 1);
-        var lengthB = RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxLengthB);
+        var lengthB = RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxLengthB);
 
         // lengthB = MathUtils.Clamp(lengthB, 1, Mathf.CeilToInt(lengthA / 2f));
-        buildingHeight =  heightAdjustment+ RandUtils.RandomBetween(GeneratorSettings.LBuildingSettings.MinMaxHeight);
+        BuildingHeight =  heightAdjustment+ RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxHeight);
 
         // normalize size so it's in range of <size>
         var proportionWA = widthA / (float) (widthA + widthB);
@@ -50,34 +48,34 @@ public class LBuildingGenerator : BuildingGenerator {
         actualWidthA += (size.x - actualWidthA - actualWidthB);
         actualLengthA += (size.y - actualLengthA - actualLengthB);
 
-        dimensionsA = new Vector2Int(actualWidthA + actualWidthB, actualLengthA + actualLengthB);
-        dimensionsB = new Vector2Int(actualWidthB, actualLengthB);
-        var boolArr = new Arr2d<bool>(dimensionsA, true);
+        DimensionsA = new Vector2Int(actualWidthA + actualWidthB, actualLengthA + actualLengthB);
+        DimensionsB = new Vector2Int(actualWidthB, actualLengthB);
+        var boolArr = new Arr2d<bool>(DimensionsA, true);
         CarveLShape(boolArr);
 
         return boolArr;
     }
 
-    private MeshData GenLRoof() {
-        var height = 1.5f;
-        var thickness = 0.15f;
-        var extrusion = 0.25f;
-        var cornerRoofEndingChance = 0.0f;
+    protected MeshData GenLRoof() {
+        var height = RandUtils.RandomBetween(GeneratorSettings.LSettings.MinMaxRoofHeight);
+        var thickness = GeneratorSettings.GeneralSettings.RoofThickness;
+        var extrusion = GeneratorSettings.GeneralSettings.RoofExtrusion;
+        var cornerRoofEndingChance = GeneratorSettings.LSettings.CornerEndingChance;
 
         var roofs = new List<MeshData>();
         if (RandUtils.BoolWeighted(cornerRoofEndingChance)) {
-            var roofInset = Rand.Range(dimensionsB.x / 2f, dimensionsB.x);
-            var roofSizeB = (dimensionsA.x - roofInset) - (dimensionsA.x - dimensionsB.x) / 2f;
-            var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+            var roofInset = DimensionsB.x * RandUtils.RandomBetween(GeneratorSettings.LSettings.CornerInsetRatio);
+            var roofSize = (DimensionsA.x - roofInset) - (DimensionsA.x - DimensionsB.x) / 2f;
+            var cornerA = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, DimensionsA.y - DimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
                 {"width", roofInset},
                 {"height", height},
-                {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+                {"length", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"thickness", thickness},
                 {"addCap", true},
                 {"joinCaps", true},
             });
-            var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, -0.5f), Quaternion.Euler(0, 270, 0), new Dictionary<string, dynamic> {
-                {"width", (dimensionsA.y - dimensionsB.y) / 2f},
+            var cornerA1 = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, -0.5f), Quaternion.Euler(0, 270, 0), new Dictionary<string, dynamic> {
+                {"width", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"height", height},
                 {"length", roofInset},
                 {"thickness", thickness},
@@ -85,19 +83,19 @@ public class LBuildingGenerator : BuildingGenerator {
                 {"joinCaps", true},
             });
 
-            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - roofSizeB - roofInset - 0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                {"width", roofSizeB},
+            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - roofSize - roofInset - 0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"width", roofSize},
                 {"height", height},
                 {"thickness", thickness},
-                {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+                {"length", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"extrusion", 0},
                 {"addCap", true},
                 {"closeRoof", true}
             });
-            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - roofInset - 0.5f, buildingHeight, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
-                {"width", roofSizeB},
+            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - roofInset - 0.5f, BuildingHeight, DimensionsA.y - DimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+                {"width", roofSize},
                 {"height", height},
-                {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+                {"length", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"thickness", thickness},
                 {"extrusion", 0},
                 {"addCap", true},
@@ -108,21 +106,21 @@ public class LBuildingGenerator : BuildingGenerator {
             roofs.Add(roofA);
             roofs.Add(roofA1);
         } else {
-            var roofSize = (dimensionsA.x) - (dimensionsA.x - dimensionsB.x) / 2f;
-            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - roofSize - 0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+            var roofSize = (DimensionsA.x) - (DimensionsA.x - DimensionsB.x) / 2f;
+            var roofA = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - roofSize - 0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
                 {"width", roofSize},
                 {"height", height},
                 {"thickness", thickness},
-                {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+                {"length", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"extrusion", extrusion},
                 {"extrusionLeft", false},
                 {"addCap", true},
                 {"closeRoof", true}
             });
-            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - 0.5f, buildingHeight, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
+            var roofA1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - 0.5f, BuildingHeight, DimensionsA.y - DimensionsB.y - 0.5f), Quaternion.Euler(0, 180, 0), new Dictionary<string, dynamic> {
                 {"width", roofSize},
                 {"height", height},
-                {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+                {"length", (DimensionsA.y - DimensionsB.y) / 2f},
                 {"thickness", thickness},
                 {"extrusion", extrusion},
                 {"extrusionRight", false},
@@ -133,10 +131,10 @@ public class LBuildingGenerator : BuildingGenerator {
             roofs.Add(roofA1);
         }
 
-        var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, buildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"width", (dimensionsA.x - dimensionsB.x) / 2f},
+        var cornerB = MeshGenerator.GetMesh<CornerRoofGenerator>(new Vector3(-0.5f, BuildingHeight, -0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+            {"width", (DimensionsA.x - DimensionsB.x) / 2f},
             {"height", height},
-            {"length", (dimensionsA.y - dimensionsB.y) / 2f},
+            {"length", (DimensionsA.y - DimensionsB.y) / 2f},
             {"thickness", thickness},
             {"addCap", true},
             {"joinCaps", true}
@@ -144,20 +142,20 @@ public class LBuildingGenerator : BuildingGenerator {
 
         roofs.Add(cornerB);
 
-        var roofB = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, buildingHeight, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsB.y + (dimensionsA.y - dimensionsB.y) / 2f},
+        var roofB = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(-0.5f, BuildingHeight, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsB.y + (DimensionsA.y - DimensionsB.y) / 2f},
             {"height", height},
-            {"length", (dimensionsA.x - dimensionsB.x) / 2f},
+            {"length", (DimensionsA.x - DimensionsB.x) / 2f},
             {"thickness", thickness},
             {"extrusion", extrusion},
             {"extrusionRight", false},
             {"addCap", true},
             {"closeRoof", true}
         });
-        var roofB1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, buildingHeight, (dimensionsA.y - dimensionsB.y) / 2f - 0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
-            {"width", dimensionsB.y + (dimensionsA.y - dimensionsB.y) / 2f},
+        var roofB1 = MeshGenerator.GetMesh<StraightRoofGenerator>(new Vector3(DimensionsA.x - DimensionsB.x - 0.5f, BuildingHeight, (DimensionsA.y - DimensionsB.y) / 2f - 0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+            {"width", DimensionsB.y + (DimensionsA.y - DimensionsB.y) / 2f},
             {"height", height},
-            {"length", (dimensionsA.x - dimensionsB.x) / 2f},
+            {"length", (DimensionsA.x - DimensionsB.x) / 2f},
             {"thickness", thickness},
             {"extrusion", extrusion},
             {"extrusionLeft", false},
@@ -170,64 +168,64 @@ public class LBuildingGenerator : BuildingGenerator {
         return MeshUtils.Combine(roofs);
     }
 
-    private MeshData GenLOverhang(int LOD) {
-        if (!RandUtils.BoolWeighted(GeneratorSettings.LBuildingSettings.OverhangChance))
+    protected MeshData GenLOverhang(int LOD) {
+        if (!RandUtils.BoolWeighted(GeneratorSettings.LSettings.OverhangChance))
             return new MeshData();
 
         var featureThickness = 0.1f;
         var meshes = new List<MeshData>();
         var thickness = 0.25f;
         var start = 2;
-        var end = Rand.Range(start + 1, buildingHeight - 1);
+        var end = Rand.Range(start + 1, BuildingHeight - 1);
         var height = end - start;
 
         // WALLS
-        var wallA = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, start, dimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"sizeA", dimensionsB.x},
+        var wallA = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(DimensionsA.x - DimensionsB.x - 0.5f, start, DimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+            {"sizeA", DimensionsB.x},
             {"sizeB", height},
             {"orientation", PlaneGenerator.PlaneOrientation.XY},
             {"flip", true}
         });
-        var wallB = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - 0.5f, start, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-            {"sizeA", dimensionsB.y},
+        var wallB = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(DimensionsA.x - 0.5f, start, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+            {"sizeA", DimensionsB.y},
             {"sizeB", height},
             {"orientation", PlaneGenerator.PlaneOrientation.XY},
             {"flip", true}
         });
-        var plane = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, start + height, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-            {"sizeA", dimensionsB.x},
-            {"sizeB", dimensionsB.y}
+        var plane = MeshGenerator.GetMesh<PlaneGenerator>(new Vector3(DimensionsA.x - DimensionsB.x - 0.5f, start + height, DimensionsA.y - DimensionsB.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+            {"sizeA", DimensionsB.x},
+            {"sizeB", DimensionsB.y}
         });
         meshes.Add(wallA);
         meshes.Add(wallB);
         meshes.Add(plane);
 
-        var fromA = new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, start, dimensionsA.y - 0.5f);
-        var toA = fromA + Vector3.right * dimensionsB.x;
+        var fromA = new Vector3(DimensionsA.x - DimensionsB.x - 0.5f, start, DimensionsA.y - 0.5f);
+        var toA = fromA + Vector3.right * DimensionsB.x;
         var wallAPerpendicular = Vector3.Cross((toA - fromA).normalized, Vector3.up);
-        meshes.Add(AddWallFeatures(fromA, toA, height, dimensionsB.x, 0, LOD, false));
+        meshes.Add(AddWallFeatures(fromA, toA, height, DimensionsB.x, 0, LOD, false));
         meshes.Add(MeshGenerator.GetMesh<LineGenerator>(fromA + Vector3.up * featureThickness - wallAPerpendicular * featureThickness / 2f, Quaternion.identity, new Dictionary<string, dynamic> {
             {"start", Vector3.zero + Vector3.right * featureThickness / 2f},
-            {"end", Vector3.right * (dimensionsB.x - featureThickness / 2f)},
+            {"end", Vector3.right * (DimensionsB.x - featureThickness / 2f)},
             {"thickness", featureThickness},
             {"extrusion", featureThickness},
             {"submeshIndex", 2},
             {"rotateUV", true}
         }));
 
-        var fromB = new Vector3(dimensionsA.x - 0.5f, start, dimensionsA.y - 0.5f);
-        var toB = fromB - Vector3.forward * dimensionsB.y;
+        var fromB = new Vector3(DimensionsA.x - 0.5f, start, DimensionsA.y - 0.5f);
+        var toB = fromB - Vector3.forward * DimensionsB.y;
         var wallBPerpendicular = Vector3.Cross((toB - fromB).normalized, Vector3.up);
-        meshes.Add(AddWallFeatures(fromB, toB, height, dimensionsB.y, 90, LOD, false));
+        meshes.Add(AddWallFeatures(fromB, toB, height, DimensionsB.y, 90, LOD, false));
         meshes.Add(MeshGenerator.GetMesh<LineGenerator>(fromB + Vector3.up * featureThickness - wallBPerpendicular * featureThickness / 2f, Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
             {"start", Vector3.zero + Vector3.right * featureThickness / 2f},
-            {"end", Vector3.right * (dimensionsB.y - featureThickness / 2f)},
+            {"end", Vector3.right * (DimensionsB.y - featureThickness / 2f)},
             {"thickness", featureThickness},
             {"extrusion", featureThickness},
             {"submeshIndex", 2},
             {"rotateUV", true}
         }));
-        meshes.Add(MeshGenerator.GetMesh<LineGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - 0.5f) - wallAPerpendicular * featureThickness / 2f, Quaternion.identity, new Dictionary<string, dynamic> {
+        meshes.Add(MeshGenerator.GetMesh<LineGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - 0.5f) - wallAPerpendicular * featureThickness / 2f, Quaternion.identity, new Dictionary<string, dynamic> {
             {"start", Vector3.zero},
             {"end", Vector3.up * (end + featureThickness / 2f)},
             {"thickness", featureThickness},
@@ -244,8 +242,8 @@ public class LBuildingGenerator : BuildingGenerator {
         if (RandUtils.BoolWeighted(archChance)) {
             // ARCHES/ARCH X
             if (RandUtils.BoolWeighted(archChance)) {
-                var diffA = dimensionsB.x - start;
-                var archWidthA = dimensionsB.x - 2 * thickness;
+                var diffA = DimensionsB.x - start;
+                var archWidthA = DimensionsB.x - 2 * thickness;
                 var archOffsetA = thickness;
                 if (diffA > 0) {
                     archWidthA = start;
@@ -253,7 +251,7 @@ public class LBuildingGenerator : BuildingGenerator {
                     shouldAddWallsA = true;
                 }
 
-                var archA = MeshGenerator.GetMesh<ArchGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f + archOffsetA, start - 1, dimensionsA.y - thickness - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                var archA = MeshGenerator.GetMesh<ArchGenerator>(new Vector3(DimensionsA.x - DimensionsB.x - 0.5f + archOffsetA, start - 1, DimensionsA.y - thickness - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
                     {"width", archWidthA},
                     {"height", 1},
                     {"length", thickness},
@@ -261,14 +259,14 @@ public class LBuildingGenerator : BuildingGenerator {
                 });
                 meshes.Add(archA);
                 if (shouldAddWallsA) {
-                    var wallC = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                    var wallC = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
                         {"width", diffA / 2f},
                         {"height", start},
                         {"thickness", 0.01f},
                         {"thicknessInwards", true},
                         {"flip", true}
                     });
-                    var wallC1 = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - dimensionsB.x - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                    var wallC1 = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - DimensionsB.x - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
                         {"width", diffA / 2f},
                         {"height", start},
                         {"thickness", 0.01f},
@@ -277,7 +275,7 @@ public class LBuildingGenerator : BuildingGenerator {
                     meshes.Add(wallC);
                     meshes.Add(wallC1);
                 } else {
-                    var pillarX = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(dimensionsA.x - dimensionsB.x + thickness / 2f - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                    var pillarX = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(DimensionsA.x - DimensionsB.x + thickness / 2f - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
                         {"width", thickness},
                         {"height", start},
                         {"thicknessInwards", true}
@@ -286,8 +284,8 @@ public class LBuildingGenerator : BuildingGenerator {
                 }
             } else {
                 shouldAddWallsA = true;
-                var wallX = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
-                    {"width", dimensionsB.x},
+                var wallX = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"width", DimensionsB.x},
                     {"height", start},
                     {"thickness", 0.01f},
                     {"thicknessInwards", true},
@@ -298,8 +296,8 @@ public class LBuildingGenerator : BuildingGenerator {
 
             // ARCHES/ARCH Z
             if (RandUtils.BoolWeighted(archChance)) {
-                var diffB = dimensionsB.y - start;
-                var archWidthB = dimensionsB.y - 2 * thickness;
+                var diffB = DimensionsB.y - start;
+                var archWidthB = DimensionsB.y - 2 * thickness;
                 var archOffsetB = thickness;
                 if (diffB > 0) {
                     archWidthB = start;
@@ -307,7 +305,7 @@ public class LBuildingGenerator : BuildingGenerator {
                     shouldAddWallsB = true;
                 }
 
-                var archB = MeshGenerator.GetMesh<ArchGenerator>(new Vector3(dimensionsA.x - 0.5f, start - 1, dimensionsA.y - dimensionsB.y + archOffsetB - 0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
+                var archB = MeshGenerator.GetMesh<ArchGenerator>(new Vector3(DimensionsA.x - 0.5f, start - 1, DimensionsA.y - DimensionsB.y + archOffsetB - 0.5f), Quaternion.Euler(0, -90, 0), new Dictionary<string, dynamic> {
                     {"width", archWidthB},
                     {"height", 1},
                     {"length", thickness},
@@ -315,13 +313,13 @@ public class LBuildingGenerator : BuildingGenerator {
                 });
                 meshes.Add(archB);
                 if (shouldAddWallsB) {
-                    var wallD = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                    var wallD = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
                         {"width", diffB / 2f},
                         {"height", start},
                         {"thickness", 0.01f},
                         {"thicknessInwards", true}
                     });
-                    var wallD1 = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - dimensionsB.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                    var wallD1 = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - DimensionsB.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
                         {"width", diffB / 2f},
                         {"height", start},
                         {"thickness", 0.01f},
@@ -331,7 +329,7 @@ public class LBuildingGenerator : BuildingGenerator {
                     meshes.Add(wallD);
                     meshes.Add(wallD1);
                 } else {
-                    var pillarZ = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(dimensionsA.x - thickness / 2f - 0.5f, 0, dimensionsA.y - dimensionsB.y + thickness - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                    var pillarZ = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(DimensionsA.x - thickness / 2f - 0.5f, 0, DimensionsA.y - DimensionsB.y + thickness - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
                         {"width", thickness},
                         {"height", start},
                         {"thicknessInwards", true}
@@ -340,8 +338,8 @@ public class LBuildingGenerator : BuildingGenerator {
                 }
             } else {
                 shouldAddWallsB = true;
-                var wallZ = MeshGenerator.GetMesh<WallGenerator>(new Vector3(dimensionsA.x - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
-                    {"width", dimensionsB.y},
+                var wallZ = MeshGenerator.GetMesh<WallGenerator>(new Vector3(DimensionsA.x - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+                    {"width", DimensionsB.y},
                     {"height", start},
                     {"thickness", 0.01f},
                     {"thicknessInwards", true}
@@ -352,7 +350,7 @@ public class LBuildingGenerator : BuildingGenerator {
 
         // MIDDLE PILLAR
         if (!shouldAddWallsA || !shouldAddWallsB) {
-            var pillarMid = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(dimensionsA.x - thickness / 2f - 0.5f, 0, dimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
+            var pillarMid = MeshGenerator.GetMesh<PillarGenerator>(new Vector3(DimensionsA.x - thickness / 2f - 0.5f, 0, DimensionsA.y - 0.5f), Quaternion.Euler(0, 90, 0), new Dictionary<string, dynamic> {
                 {"width", thickness},
                 {"height", start},
                 {"thicknessInwards", true}
@@ -364,8 +362,8 @@ public class LBuildingGenerator : BuildingGenerator {
     }
 
     private void CarveLShape(Arr2d<bool> arr) {
-        var from = new Vector2Int(dimensionsA.x - dimensionsB.x, dimensionsA.y - dimensionsB.y);
-        var to = new Vector2Int(dimensionsA.x, dimensionsA.y);
+        var from = new Vector2Int(DimensionsA.x - DimensionsB.x, DimensionsA.y - DimensionsB.y);
+        var to = new Vector2Int(DimensionsA.x, DimensionsA.y);
         arr.Fill(from, to, false);
     }
 }

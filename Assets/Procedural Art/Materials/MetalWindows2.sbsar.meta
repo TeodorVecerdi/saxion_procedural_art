@@ -14,21 +14,21 @@ ScriptedImporter:
   - graphLabel: MetalWindows
     prototypeName: MetalWindows
     graphDescIndex: 0
-    generateAllOutputs: 1
+    generateAllOutputs: 0
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://MetalWindows\" label=\"\" >\n  <presetinput
-      identifier=\"$randomseed\" uid=\"1758504629\" type=\"4\" value=\"2058\" />\n 
-      <presetinput identifier=\"TintColor\" uid=\"1449833695\" type=\"3\" value=\"0.665094,0.743155,1,1\"
-      />\n  <presetinput identifier=\"MainColor\" uid=\"1449834275\" type=\"3\" value=\"0.54668,0.858491,0.818442,1\"
+      identifier=\"$randomseed\" uid=\"1758504629\" type=\"4\" value=\"4700\" />\n 
+      <presetinput identifier=\"TintColor\" uid=\"1449833695\" type=\"3\" value=\"0.787647,0.824294,0.943396,1\"
+      />\n  <presetinput identifier=\"MainColor\" uid=\"1449834275\" type=\"3\" value=\"0.752047,0.943396,0.919478,1\"
       />\n  <presetinput identifier=\"FrameColor\" uid=\"1449834413\" type=\"3\"
-      value=\"0.486027,0.634077,0.811321,1\" />\n </sbspreset>\n"
+      value=\"0.700739,0.755686,0.820755,1\" />\n  <presetinput identifier=\"Opacity\"
+      uid=\"1449839748\" type=\"0\" value=\"1\" />\n </sbspreset>\n"
     shaderName: HDRP/LitTessellation
     materialProperties:
       shader: {fileID: 4800000, guid: 756bac9090102564582875f4c7e30202, type: 3}
       shaderKeywords: _ALPHABLEND_ON _DISPLACEMENT_LOCK_TILING_SCALE _HEIGHTMAP _MASKMAP
-        _MATERIAL_FEATURE_CLEAR_COAT _MATERIAL_FEATURE_TRANSMISSION _METALLICGLOSSMAP
-        _NORMALMAP _NORMALMAP_TANGENT_SPACE _OCCLUSIONMAP _ROUGHNESSMAP _TESSELLATION_DISPLACEMENT
-        _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
+        _MATERIAL_FEATURE_CLEAR_COAT _METALLICGLOSSMAP _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        _OCCLUSIONMAP _ROUGHNESSMAP _TESSELLATION_DISPLACEMENT _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
       lightmapFlags: 4
       enableInstancingVariants: 1
       doubleSidedGI: 0
@@ -252,7 +252,7 @@ ScriptedImporter:
       - name: _LinkDetailsWithBase
         float: 1
       - name: _MaterialID
-        float: 5
+        float: 1
       - name: _Metallic
         float: 1
       - name: _NormalMapSpace
@@ -272,7 +272,7 @@ ScriptedImporter:
       - name: _ReceivesSSR
         float: 1
       - name: _RefractionModel
-        float: 1
+        float: 3
       - name: _SSRefractionProjectionModel
         float: 0
       - name: _Smoothness
@@ -340,13 +340,13 @@ ScriptedImporter:
       - name: _TransmissionEnable
         float: 1
       - name: _TransparentBackfaceEnable
-        float: 0
+        float: 1
       - name: _TransparentCullMode
         float: 2
       - name: _TransparentDepthPostpassEnable
-        float: 0
+        float: 1
       - name: _TransparentDepthPrepassEnable
-        float: 0
+        float: 1
       - name: _TransparentSortPriority
         float: 0
       - name: _TransparentWritingMotionVec
@@ -577,9 +577,5 @@ ScriptedImporter:
     generatedTextures:
     - {fileID: 3920215580088709210, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
     - {fileID: -2297879356107069356, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
-    - {fileID: 7874610429849102642, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
-    - {fileID: 5791240415123928884, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
     - {fileID: 8269299163225814236, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
-    - {fileID: 4449085006951185352, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
-    - {fileID: 8063492249312261318, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}
     - {fileID: -7630936014788664592, guid: a0ce7ec4c3c9ad741a4b68ec88ab5805, type: 3}

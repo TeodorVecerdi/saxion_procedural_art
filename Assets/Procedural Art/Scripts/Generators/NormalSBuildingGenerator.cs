@@ -45,6 +45,15 @@ public class NormalSBuildingGenerator : BuildingGenerator {
                 {"extrusionOutwards", false}
             });
             features.MergeMeshData(pillar);
+            features.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(wallPerpendicular * 0.035f + wallEnd + Vector3.up * buildingHeight, Quaternion.Euler(0, wallAngle, 0), new Dictionary<string, dynamic> {
+                {"start", Vector2.left * (0.4f * pillarThickness)},
+                {"end", Vector2.left * (wallSize + 0.7f * pillarThickness)},
+                {"thickness", pillarThickness},
+                {"extrusion", pillarThickness},
+                {"submeshIndex", 2},
+                {"extrusionCenter", true},
+                {"rotateUV", true}
+            }));
         }
 
         var splitSectionsVertical = new List<float> {0, 1};
@@ -80,7 +89,7 @@ public class NormalSBuildingGenerator : BuildingGenerator {
             for (var i2 = 1; i2 < splitSectionsHorizontal.Count; i2++) {
                 var sectionWidth = splitSectionsHorizontal[i2] - splitSectionsHorizontal[i2 - 1];
                 var addWindowHorizontal = addWindow;
-                if (RandUtils.BoolWeighted(windowChance/2.0f)) addWindowHorizontal = false;
+                if (RandUtils.BoolWeighted(windowChance / 2.0f)) addWindowHorizontal = false;
                 if (addWindowHorizontal) {
                     windowWidth = Mathf.Min(sectionWidth - pillarThickness, Rand.Range(1f, Mathf.Max(1f, sectionWidth * 0.75f)));
                 }
@@ -96,7 +105,7 @@ public class NormalSBuildingGenerator : BuildingGenerator {
                     });
                     features.MergeMeshData(verticalLine);
                 }
-                
+
                 if (i == 1)
                     continue;
 
@@ -183,5 +192,136 @@ public class NormalSBuildingGenerator : BuildingGenerator {
         }
 
         return features;
+    }
+
+    protected override MeshData GenSquareRoof() {
+        var baseRoof = base.GenSquareRoof();
+        var pillarThickness = GeneratorSettings.GeneralSettings.PillarThickness;
+        var halfWidth = DimensionsA.y / 2;
+        if (DimensionsA.y % 2 == 0) {
+            var stepHeight = (RoofHeight - 1f) / (halfWidth - 1);
+            for (var i = 0; i < halfWidth; i++) {
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (i - 0.5f * pillarThickness) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + i * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (i - 0.5f * pillarThickness) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + i * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f + i + 0.5f * pillarThickness) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + (halfWidth - i - 1) * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f + i + 0.5f * pillarThickness) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + (halfWidth - i - 1) * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                
+            }
+
+            baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f - 0.5f) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"start", Vector3.zero},
+                {"end", Vector3.up * (1f + (halfWidth - 0.5f) * stepHeight)},
+                {"thickness", pillarThickness},
+                {"extrusion", 1f},
+                {"submeshIndex", 2},
+                {"extrusionCenter", true},
+                {"rotateUV", false}
+            }));
+            baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f - 0.5f) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"start", Vector3.zero},
+                {"end", Vector3.up * (1f + (halfWidth - 0.5f) * stepHeight)},
+                {"thickness", pillarThickness},
+                {"extrusion", 1f},
+                {"submeshIndex", 2},
+                {"extrusionCenter", true},
+                {"rotateUV", false}
+            }));
+        } else if(DimensionsA.y % 2 == 1) {
+            var stepHeight = (RoofHeight - 1f) / (halfWidth - 1);
+            for (var i = 0; i < halfWidth; i++) {
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (i - 0.5f * pillarThickness) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + i * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (i - 0.5f * pillarThickness) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + i * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f + i + 0.5f * pillarThickness + 0.5f) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + (halfWidth - i - 1) * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f + i + 0.5f * pillarThickness + 0.5f) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                    {"start", Vector3.zero},
+                    {"end", Vector3.up * (1f + (halfWidth - i - 1) * stepHeight)},
+                    {"thickness", pillarThickness},
+                    {"extrusion", 1f},
+                    {"submeshIndex", 2},
+                    {"extrusionCenter", true},
+                    {"rotateUV", false}
+                }));
+                
+            }
+
+            baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f - 0.5f) + Vector3.right * (-0.5f - 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"start", Vector3.zero},
+                {"end", Vector3.up * (1f + halfWidth * stepHeight)},
+                {"thickness", pillarThickness},
+                {"extrusion", 1f + pillarThickness},
+                {"submeshIndex", 2},
+                {"extrusionCenter", true},
+                {"rotateUV", false}
+            }));
+            baseRoof.MergeMeshData(MeshGenerator.GetMesh<LineGenerator>(Vector3.up * (BuildingHeight + pillarThickness / 2.0f) + Vector3.forward * (DimensionsA.y / 2.0f - 0.5f) + Vector3.right * (DimensionsA.x - 0.5f + 0.2f * pillarThickness), Quaternion.identity, new Dictionary<string, dynamic> {
+                {"start", Vector3.zero},
+                {"end", Vector3.up * (1f + halfWidth * stepHeight)},
+                {"thickness", pillarThickness},
+                {"extrusion", 1f + pillarThickness},
+                {"submeshIndex", 2},
+                {"extrusionCenter", true},
+                {"rotateUV", false}
+            }));
+        }
+
+        return baseRoof;
     }
 }

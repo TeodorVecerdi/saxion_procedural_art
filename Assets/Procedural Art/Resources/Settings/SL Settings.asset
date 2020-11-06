@@ -15,6 +15,9 @@ MonoBehaviour:
   GeneralSettings:
     RoofThickness: 0.15
     RoofExtrusion: 0.25
+    ChimneyChance: 0.94
+    ChimneySmokeChance: 0.14
+    ChimneyThicknessMinMax: {x: 0.25, y: 0.5}
     FillWallSegmentChance: 0.1
     FillWallSegmentSpacing: {x: 0.01, y: 0.02}
     FeatureThickness: 0.1
@@ -23,7 +26,7 @@ MonoBehaviour:
     WindowChance: 0.4
     HorizontalSplitMinMax: {x: 2, y: 3}
     VerticalSplitMinMax: {x: 2, y: 4}
-    PillarThickness: 0.5
+    PillarThickness: 0.55
   SquareSettings:
     MinMaxHeight: {x: 5, y: 9}
     MinMaxRoofHeight: {x: 1, y: 2}

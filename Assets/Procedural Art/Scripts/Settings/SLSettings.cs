@@ -14,6 +14,9 @@ public class SLSettings : ScriptableObject {
     public class GeneralBuildingSettingsData {
         public float RoofThickness = 0.15f;
         public float RoofExtrusion = 0.25f;
+        public float ChimneyChance = 0.9f;
+        public float ChimneySmokeChance = 0.3f;
+        public Vector2 ChimneyThicknessMinMax = 0.25f*(Vector2.up + Vector2.one); 
         [Header("Very Poor wall features")]
         public float FillWallSegmentChance = 0.1f;
         public Vector2 FillWallSegmentSpacing = 0.01f*(Vector2.one + Vector2.up);

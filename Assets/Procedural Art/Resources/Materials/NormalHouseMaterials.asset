@@ -16,5 +16,5 @@ MonoBehaviour:
   RoofMaterial: {fileID: -3931555169850261328, guid: d9fcaa9d0d7c36e4eb41f1167d48af55, type: 3}
   WindowMaterial: {fileID: 6361247793036277023, guid: 205d9bbed87ffb040aa8688ebd1967d2, type: 3}
   FeatureMaterial1: {fileID: 8232418507152558503, guid: 9b40899e400a7fe439e2a357c6514460, type: 3}
-  FeatureMaterial2: {fileID: 0}
+  FeatureMaterial2: {fileID: 7828350675490647146, guid: 4cbeafa53fc932444b97b44101b08531, type: 3}
   FeatureMaterial3: {fileID: 0}

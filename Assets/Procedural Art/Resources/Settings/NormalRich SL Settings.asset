@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7391b0573c54f1099c953e64a6a88d1, type: 3}
+  m_Name: NormalRich SL Settings
+  m_EditorClassIdentifier: 
+  GeneralSettings:
+    RoofThickness: 0.15
+    RoofExtrusion: 0.25
+    ChimneyChance: 0.94
+    ChimneySmokeChance: 0.16
+    ChimneyThicknessMinMax: {x: 0.25, y: 0.5}
+    FillWallSegmentChance: 0.1
+    FillWallSegmentSpacing: {x: 0.01, y: 0.02}
+    FeatureThickness: 0.1
+    DiagonalAChance: 0.5
+    DiagonalBChance: 0.5
+    WindowChance: 0.4
+    HorizontalSplitMinMax: {x: 2, y: 3}
+    VerticalSplitMinMax: {x: 2, y: 4}
+    PillarThickness: 0.55
+  SquareSettings:
+    MinMaxHeight: {x: 5, y: 9}
+    MinMaxRoofHeight: {x: 1.5, y: 3}
+    StraightRoofChance: 1
+    DoubleCornerRoofChance: 0
+    CornerRoofChance: 0
+    RoofWidthToBuildingWidthRatio: {x: 0.2, y: 0.4}
+  LSettings:
+    MinMaxHeight: {x: 5, y: 9}
+    MinMaxRoofHeight: {x: 1.5, y: 3}
+    CornerEndingChance: 0.3333
+    CornerInsetRatio: {x: 0.5, y: 1}
+    MinMaxWidthA: {x: 2, y: 3}
+    MinMaxLengthA: {x: 2, y: 3}
+    MinMaxWidthB: {x: 2, y: 3}
+    MinMaxLengthB: {x: 1, y: 3}
+    OverhangChance: 0.3

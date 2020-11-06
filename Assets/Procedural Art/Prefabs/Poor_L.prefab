@@ -15,7 +15,7 @@ MonoBehaviour:
   LOD0: {fileID: 7406685834827578921}
   LOD1: {fileID: 6083882967572476188}
   LOD2: {fileID: 1836532497326878844}
-  GeneratorSettings: {fileID: 0}
+  SmokePrefab: {fileID: 4893048138541788802, guid: 4eb26544816c0ad45a2187dbbc2d6a3a, type: 3}
 --- !u!1001 &6565543138664997427
 PrefabInstance:
   m_ObjectHideFlags: 0

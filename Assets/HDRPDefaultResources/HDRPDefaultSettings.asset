@@ -19,15 +19,15 @@ MonoBehaviour:
     m_Value: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 61.66
+    m_Value: 15097.3
     min: 0
   maximumVelocity:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 200
     min: 0
     max: 1500
   minimumVelocity:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 2
     min: 0
     max: 64
@@ -157,11 +157,11 @@ MonoBehaviour:
     min: 0
   upperHemisphereLuxValue:
     m_OverrideState: 0
-    m_Value: 0.46608552
+    m_Value: 0.4660715
     min: 0
   upperHemisphereLuxColor:
     m_OverrideState: 0
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 0.18750614, y: 0.29181972, z: 0.5}
   desiredLuxValue:
     m_OverrideState: 0
     m_Value: 20000

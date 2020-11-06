@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Version: 1
   profile:
-    scatteringDistance: {r: 0.058806285, g: 0.41654447, b: 0.936, a: 1}
-    transmissionTint: {r: 0.14489143, g: 0.35038742, b: 0.8301887, a: 1}
+    scatteringDistance: {r: 0.11764706, g: 0.80784315, b: 1.8117647, a: 1}
+    transmissionTint: {r: 0.14467059, g: 0.4179655, b: 1.0575917, a: 1}
     texturingMode: 0
     transmissionMode: 0
     thicknessRemap: {x: 0, y: 25}

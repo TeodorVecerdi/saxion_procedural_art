@@ -18,14 +18,13 @@ ScriptedImporter:
     generateMipMaps: 1
     preset: " <sbspreset pkgurl=\"pkg://Fantasy_Window\" label=\"\" >\n  <presetinput
       identifier=\"$outputsize\" uid=\"983421122\" type=\"8\" value=\"9,9\" />\n 
-      <presetinput identifier=\"$randomseed\" uid=\"1844430480\" type=\"4\" value=\"5505\"
+      <presetinput identifier=\"$randomseed\" uid=\"1844430480\" type=\"4\" value=\"7345\"
       />\n  <presetinput identifier=\"Frame_Thickness\" uid=\"1235907792\" type=\"0\"
-      value=\"0.104\" />\n  <presetinput identifier=\"Opacity\" uid=\"1235897392\"
-      type=\"3\" value=\"1,0,0,1\" />\n  <presetinput identifier=\"FrameColor\" uid=\"1398082040\"
-      type=\"3\" value=\"0.820755,0.651644,0.290361,0.509804\" />\n  <presetinput
-      identifier=\"GlassTilesX\" uid=\"1398082549\" type=\"4\" value=\"8\" />\n 
-      <presetinput identifier=\"GlassTilesY\" uid=\"1398082602\" type=\"4\" value=\"8\"
-      />\n </sbspreset>\n"
+      value=\"0.321\" />\n  <presetinput identifier=\"Opacity\" uid=\"1235897392\"
+      type=\"3\" value=\"1,1,1,1\" />\n  <presetinput identifier=\"FrameColor\" uid=\"1398082040\"
+      type=\"3\" value=\"0,0,0,0.666667\" />\n  <presetinput identifier=\"GlassTilesX\"
+      uid=\"1398082549\" type=\"4\" value=\"8\" />\n  <presetinput identifier=\"GlassTilesY\"
+      uid=\"1398082602\" type=\"4\" value=\"8\" />\n </sbspreset>\n"
     shaderName: HDRP/LitTessellation
     materialProperties:
       shader: {fileID: 4800000, guid: 756bac9090102564582875f4c7e30202, type: 3}

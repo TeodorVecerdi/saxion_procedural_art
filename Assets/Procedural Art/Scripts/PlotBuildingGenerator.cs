@@ -20,6 +20,8 @@ public class PlotBuildingGenerator : MonoBehaviour {
     [Tooltip("Generate a random height map using perlin noise instead of the recommended map")]
     public bool GenerateHeightMap;
     public float HeightMapMagnitude = 2f;
+    [Space]
+    public bool PlaceOnMinY;
 
     private List<Transform> children;
     private Color[] richnessColors;
@@ -80,9 +82,42 @@ public class PlotBuildingGenerator : MonoBehaviour {
 
     public IEnumerator GenerateBuilding(PlotData plot, BuildingTypeSettings settings, float heightAdjustment, Action<Transform> callback) {
         yield return new WaitForSecondsRealtime(0);
-        var building = Instantiate(settings.GeneratorPrefab, new Vector3(plot.Bounds.center.x, 0, plot.Bounds.center.y), Quaternion.Euler(0, plot.Rotation, 0));
+        var building = Instantiate(settings.GeneratorPrefab, new Vector3(plot.Bounds.center.x, transform.position.y, plot.Bounds.center.y), Quaternion.Euler(0, plot.Rotation, 0));
         building.GenerateFromPlot(plot, settings, heightAdjustment, transform.position);
+        PlaceBuilding(plot, building);
         callback(building.transform);
+    }
+
+    private void PlaceBuilding(PlotData plot, BuildingGenerator building) {
+        var (leftDown, rightDown, rightUp, leftUp) = MathUtils.RotatedRectangle(plot);
+        var averageY = 0f;
+        var count = 0;
+        var minY = 1000f;
+        if (Physics.Raycast(leftDown + Vector3.up * 200, Vector3.down, out var hitInfo1, LayerMask.GetMask("Terrain"))) {
+            averageY += hitInfo1.point.y;
+            minY = Math.Min(minY, hitInfo1.point.y);
+            count++;
+        }
+        if (Physics.Raycast(leftUp + Vector3.up * 200, Vector3.down, out var hitInfo2, LayerMask.GetMask("Terrain"))) {
+            averageY += hitInfo2.point.y;
+            minY = Math.Min(minY, hitInfo2.point.y);
+            count++;
+        }
+        if (Physics.Raycast(rightDown + Vector3.up * 200, Vector3.down, out var hitInfo3, LayerMask.GetMask("Terrain"))) {
+            averageY += hitInfo3.point.y;
+            minY = Math.Min(minY, hitInfo3.point.y);
+            count++;
+        }
+        if (Physics.Raycast(rightUp + Vector3.up * 200, Vector3.down, out var hitInfo4, LayerMask.GetMask("Terrain"))) {
+            averageY += hitInfo4.point.y;
+            minY = Math.Min(minY, hitInfo4.point.y);
+            count++;
+        }
+
+        averageY /= count;
+        var currentPosition =building.transform.position;
+        currentPosition.y = PlaceOnMinY ? minY : averageY;
+        building.transform.position = currentPosition;
     }
 
     public IEnumerator GenerateBuildings(BuildingVersions settings, int plotGridIndex) {

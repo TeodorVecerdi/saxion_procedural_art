@@ -15,7 +15,7 @@ MonoBehaviour:
   LOD0: {fileID: 4455374174062500890}
   LOD1: {fileID: 1113292776202933039}
   LOD2: {fileID: 4783335320970089039}
-  GeneratorSettings: {fileID: 0}
+  SmokePrefab: {fileID: 4893048138541788802, guid: 4eb26544816c0ad45a2187dbbc2d6a3a, type: 3}
 --- !u!1001 &7564394833548901892
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25,7 +25,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5837694755018867427, guid: ed8adb9fc7dc94148b65c2aba3606377, type: 3}
       propertyPath: m_Name
-      value: L_Building
+      value: VeryPoor_L
       objectReference: {fileID: 0}
     - target: {fileID: 5837694755018867431, guid: ed8adb9fc7dc94148b65c2aba3606377, type: 3}
       propertyPath: m_LocalPosition.x

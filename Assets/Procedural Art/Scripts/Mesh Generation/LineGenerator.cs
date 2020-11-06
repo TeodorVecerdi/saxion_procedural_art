@@ -45,7 +45,7 @@ public class LineGenerator : MeshGenerator {
 
     protected override void Generate() {
         var absEnd = end - start;
-        var cross = Vector3.Cross((absEnd - start).normalized, Vector3.forward).normalized;
+        var cross = Vector3.Cross((absEnd).normalized, Vector3.forward).normalized;
         var lowerLeft = start - cross * thickness / 2f;
         var lowerRight = start + cross * thickness / 2f;
         var upperLeft = lowerLeft + absEnd;
@@ -60,7 +60,6 @@ public class LineGenerator : MeshGenerator {
             lowerRight -= secondCross * extrusion / 2f;
             upperLeft -= secondCross * extrusion / 2f;
             upperRight -= secondCross * extrusion / 2f;
-            secondCross -= secondCross * extrusion / 2f;
             lowerLeftBack -= secondCross * extrusion / 2f;
             lowerRightBack -= secondCross * extrusion / 2f;
             upperLeftBack -= secondCross * extrusion / 2f;

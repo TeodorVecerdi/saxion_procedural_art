@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Height: 8
   HeightVariation: {x: 0, y: 2}
-  RoofHeightVariation: {x: 1, y: 1.5}
+  RoofHeightVariation: {x: 1.5, y: 2.5}
   RoofThickness: 0.15
   RoofExtrusion: 0.25

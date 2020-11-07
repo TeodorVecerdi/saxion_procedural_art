@@ -301,7 +301,7 @@ Material:
     - Vector1_28B8B943: 0
     - Vector1_28D7DF4E: 1
     - Vector1_2B5C1928: 0
-    - Vector1_2DCE38F4: 0.17
+    - Vector1_2DCE38F4: 0.05
     - Vector1_3034A0E7: 0.72
     - Vector1_35CC0B3F: 4.38
     - Vector1_3894EE55: -0.1
@@ -594,10 +594,10 @@ Material:
     - Color_DD167ECF: {r: 0.9433962, g: 0, b: 0, a: 1}
     - Color_F4D2E00B: {r: 0.10332859, g: 0.45517105, b: 0.509434, a: 1}
     - Vector2_6E1E59F4: {r: 600, g: 600, b: 0, a: 0}
-    - Vector2_A2BD3ADC: {r: 0.2, g: 0.8, b: 0, a: 0}
+    - Vector2_A2BD3ADC: {r: -0.8, g: 0.2, b: 0, a: 0}
     - Vector2_A63BBC04: {r: 0, g: 0, b: 0, a: 0}
-    - Vector2_E8E7B55A: {r: 0.1, g: 0.4, b: 0, a: 0}
-    - Vector3_3D9E21DA: {r: 12.59, g: -9.6, b: 140.1, a: 0}
+    - Vector2_E8E7B55A: {r: -0.4, g: 0.1, b: 0, a: 0}
+    - Vector3_3D9E21DA: {r: 61.83, g: -9.6, b: 140.1, a: 0}
     - Vector3_832A3DA1: {r: 0.6, g: 0.6, b: 0.3, a: 0}
     - _BaseColor0: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor1: {r: 1, g: 1, b: 1, a: 1}

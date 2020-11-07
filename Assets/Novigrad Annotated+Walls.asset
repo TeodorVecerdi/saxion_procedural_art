@@ -1001,6 +1001,20 @@ MonoBehaviour:
         width: 6
         height: 6
       Rotation: 0
+    - Bounds:
+        serializedVersion: 2
+        x: 52.84375
+        y: -33.78125
+        width: 5
+        height: 5
+      Rotation: 358.47495
+    - Bounds:
+        serializedVersion: 2
+        x: 58.21875
+        y: -32.90625
+        width: 5
+        height: 4
+      Rotation: 286.6721
     Color: {r: 0.111739054, g: 0.764151, b: 0.38501465, a: 0}
     Name: Square
   - Plots:

@@ -64,10 +64,14 @@ public class PlotBuildingGenerator : MonoBehaviour {
         }
 
         Rand.PushState((int) seed);
-
-        children.ForEach(child => DestroyImmediate(child.gameObject));
-        children.Clear();
-
+        try {
+            children.ForEach(child => DestroyImmediate(child.gameObject));
+            children.Clear();
+        } catch (Exception e) {
+            Debug.LogError("Internal data ended up as null (probably from an assembly reload). Press the <<Fix Refs>> button on the Generator");
+            throw;
+        }
+        
         BuildingGenerator.DoneOnceField = false;
         LBuildingGenerator.DoneOnceField = false;
         WallBuildingGenerator.DoneOnceField = false;

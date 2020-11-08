@@ -60,6 +60,9 @@ public class CameraRotator : MonoBehaviour {
             currentRotationSpeed = ShowUpper ? RotationSpeedUpper : RotationSpeedLower;
         }
 
-        transform.localEulerAngles += new Vector3(0, currentRotationSpeed * Time.smoothDeltaTime, 0);
+        var currentRotation = transform.eulerAngles;
+        currentRotation.y += currentRotationSpeed * Time.smoothDeltaTime;
+        if (currentRotation.y >= 360) currentRotation.y -= 360;
+        transform.eulerAngles = currentRotation;
     }
 }

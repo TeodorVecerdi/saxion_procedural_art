@@ -71,11 +71,16 @@ public class PlotBuildingGenerator : MonoBehaviour {
             Debug.LogError("Internal data ended up as null (probably from an assembly reload). Press the <<Fix Refs>> button on the Generator");
             throw;
         }
-        
+        // Reset static fields
         BuildingGenerator.DoneOnceField = false;
+        PoorSBuildingGenerator.DoneOnceField = false;
+        NormalSBuildingGenerator.DoneOnceField = false;
         LBuildingGenerator.DoneOnceField = false;
+        PoorLBuildingGenerator.DoneOnceField = false;
+        NormalLBuildingGenerator.DoneOnceField = false;
         WallBuildingGenerator.DoneOnceField = false;
         TowerBuildingGenerator.DoneOnceField = false;
+        OverhangBuildingGenerator.DoneOnceField = false;
 
         for (var i = 0; i < PlotFile.PlotGrids.Count; i++) {
             var buildingVersions = BuildingVersions.Find(settings => settings.PlotLayerName == PlotFile.PlotGrids[i].Name);
@@ -87,8 +92,8 @@ public class PlotBuildingGenerator : MonoBehaviour {
     public IEnumerator GenerateBuilding(PlotData plot, BuildingTypeSettings settings, float heightAdjustment, Action<Transform> callback) {
         yield return new WaitForSecondsRealtime(0);
         var building = Instantiate(settings.GeneratorPrefab, new Vector3(plot.Bounds.center.x, transform.position.y, plot.Bounds.center.y), Quaternion.Euler(0, plot.Rotation, 0));
-        building.GenerateFromPlot(plot, settings, heightAdjustment, transform.position);
         PlaceBuilding(plot, building);
+        building.GenerateFromPlot(plot, settings, heightAdjustment, transform.position);
         callback(building.transform);
     }
 

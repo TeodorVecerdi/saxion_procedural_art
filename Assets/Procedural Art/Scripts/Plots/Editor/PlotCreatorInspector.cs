@@ -78,7 +78,7 @@ public class PlotCreatorInspector : Editor {
         }
 
         GUILayout.BeginVertical("Plot Grids", GUIStyle.none);
-        if (GUILayout.Button("New Plot Grid")) {
+        if (GUILayout.Button("New layer")) {
             plotCreator.PlotGrids.Add(new PlotGrid {Name ="New Grid", Color = Color.magenta, Plots = new List<Plot>()});
         }
 

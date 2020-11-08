@@ -89,6 +89,10 @@ public static class Rand {
             return min;
         return min + Mathf.Abs(Int % (max - min));
     }
+    
+    public static int Range(int max) {
+        return Range(0, max);
+    }
 
     public static int RangeInclusive(int min, int max) {
         if (max <= min)
@@ -100,6 +104,10 @@ public static class Rand {
         if (max <= (double) min)
             return min;
         return Value * (max - min) + min;
+    }
+    
+    public static float Range(float max) {
+        return Range(0f, max);
     }
 
     public static bool Chance(float chance) {

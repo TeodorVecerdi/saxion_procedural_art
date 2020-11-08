@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class RandUtils {
@@ -19,5 +20,9 @@ public static class RandUtils {
     
     public static Vector3Int RandomBetween(Vector3Int a, Vector3Int b) {
         return new Vector3Int(Rand.RangeInclusive(a.x, b.x), Rand.RangeInclusive(a.y, b.y), Rand.RangeInclusive(a.z, b.z));
+    }
+
+    public static T ListItem<T>(List<T> list) {
+        return list[Rand.Range(0, list.Count)];
     }
 }

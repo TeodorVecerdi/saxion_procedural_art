@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using V2i = UnityEngine.Vector2Int;
@@ -12,14 +13,22 @@ public static class MathUtils {
     public static float EaseInOut(float t) => Mathf.Lerp(EaseIn(t), EaseOut(t), t);
 
     public static float InverseLerp(Vector3 a, Vector3 b, Vector3 value) {
-        var AB = b - a;
-        var AV = value - a;
-        return Mathf.Clamp01(Vector3.Dot(AV, AB) / Vector3.Dot(AB, AB));
+        var ab = b - a;
+        var av = value - a;
+        return Mathf.Clamp01(Vector3.Dot(av, ab) / Vector3.Dot(ab, ab));
     }
     
     public static float Map(this float value, float a1, float a2, float b1, float b2) => b1 + (value - a1) * (b2 - b1) / (a2 - a1);
     public static V2 Map(this V2 value, float a1, float a2, float b1, float b2) => new V2(Map(value.x, a1, a2, b1, b2), Map(value.y, a1, a2, b1, b2));
     public static int Clamp(int value, int min, int max) => value < min ? min : value > max ? max : value;
+
+    public static V2 Scaled(this V2 vector, V2 scale) {
+        return new V2(vector.x * scale.x, vector.y * scale.y);
+    }
+
+    public static V2 WithMagnitude(this V2 vector, float magnitude) {
+        return vector.normalized * magnitude;
+    }
 
     public static V2i ToV2I(this V2 value, bool round = false, bool floor = false) =>
         new V2i(round ? Mathf.RoundToInt(value.x) : floor ? Mathf.FloorToInt(value.x) : Mathf.CeilToInt(value.x),

@@ -1,6 +1,8 @@
 # Procedural Art
 Repository for the Procedural Art course at Saxion where the task was to procedurally generate a city in the style of a chosen theme (in my case The Witcher 3's city center of Novigrad). 
 
+[**Research document**](Github/docs/novigrad_visual_research.pdf)
+
 ## Top view
 ![Top view of a procedurally generated city on top of an island](Github/img/top.png)
 ## Side view
